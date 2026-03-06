@@ -7,7 +7,7 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center bg-[#1D1D1D] text-white">
 
             {/* Card */}
-            <div className="w-[650px] border border-[#636363] rounded-2xl p-10">
+            <div className="w-162.5 border border-[#636363] rounded-2xl p-10">
 
                 {/* Logo */}
                 <div className="flex flex-col items-center mb-8">
@@ -82,3 +82,5 @@ const Login = () => {
 };
 
 export default Login;
+
+// this is login page . 
