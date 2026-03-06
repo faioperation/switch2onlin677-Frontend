@@ -1,13 +1,23 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/Vector.png";
+import { useNavigate } from "react-router";
 
 const SetPassword = () => {
+        const navigate = useNavigate();
 
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm();
+
+  const newPassword = watch("newPassword");
 
   const onSubmit = (data) => {
     console.log(data);
+     navigate("/auth/password-successfull");
   };
 
   return (
@@ -39,6 +49,7 @@ const SetPassword = () => {
 
           {/* New Password */}
           <div>
+
             <label className="text-sm text-gray-300">
               New Password
             </label>
@@ -46,13 +57,27 @@ const SetPassword = () => {
             <input
               type="password"
               placeholder="******"
-              {...register("newPassword")}
+              {...register("newPassword", {
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters"
+                }
+              })}
               className="w-full mt-2 px-4 py-3 rounded-lg bg-white/5 border border-[#636363] outline-none focus:border-[#00CE51]"
             />
+
+            {errors.newPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.newPassword.message}
+              </p>
+            )}
+
           </div>
 
           {/* Confirm Password */}
           <div>
+
             <label className="text-sm text-gray-300">
               Confirm Password
             </label>
@@ -60,9 +85,20 @@ const SetPassword = () => {
             <input
               type="password"
               placeholder="******"
-              {...register("confirmPassword")}
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === newPassword || "Passwords do not match"
+              })}
               className="w-full mt-2 px-4 py-3 rounded-lg bg-white/5 border border-[#636363] outline-none focus:border-[#00CE51]"
             />
+
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+
           </div>
 
           {/* Button */}

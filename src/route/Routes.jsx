@@ -10,6 +10,7 @@ import Login from "../pages/Authintication/Login";
 import ForgetPassword from "../pages/Authintication/ForgetPassword";
 import Otp from "../pages/Authintication/Otp";
 import SetPassword from "../pages/Authintication/SetPassword";
+import PasswordSuccessfull from "../pages/Authintication/PasswordSuccessfull";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -47,6 +48,7 @@ export const router = createBrowserRouter([
           { path: "forget-password", element: <ForgetPassword></ForgetPassword> },
           { path: "otp", element: <Otp></Otp> },
           { path: "set-password", element: <SetPassword></SetPassword> },
+          { path: "password-successfull", element: <PasswordSuccessfull></PasswordSuccessfull> },
         ],
       },
 ]);

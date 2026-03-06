@@ -1,10 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/Vector.png";
+import { useNavigate } from "react-router";
 
 const Login = () => {
 
     const { register, handleSubmit } = useForm();
+    const navigate = useNavigate();
 
     const onSubmit = (data) => {
         console.log(data);
@@ -68,6 +70,7 @@ const Login = () => {
 
                         <div className="flex justify-end mt-2">
                             <button
+                                onClick={() => navigate('/auth/forget-password')}
                                 type="button"
                                 className="text-sm text-[#A4A4A4] hover:text-white"
                             >

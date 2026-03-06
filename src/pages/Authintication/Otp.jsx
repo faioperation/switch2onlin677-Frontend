@@ -1,10 +1,16 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/Vector.png";
+import { useNavigate } from "react-router";
 
 const Otp = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
 
-  const { register, handleSubmit } = useForm();
+    const navigate = useNavigate();
 
   const onSubmit = (data) => {
     const otp =
@@ -16,6 +22,7 @@ const Otp = () => {
       data.otp6;
 
     console.log("OTP:", otp);
+    navigate("/auth/set-password");
   };
 
   return (
@@ -46,43 +53,32 @@ const Otp = () => {
           {/* OTP Inputs */}
           <div className="flex justify-center gap-4">
 
-            <input
-              maxLength={1}
-              {...register("otp1")}
-              className="w-12 h-12 text-center rounded-lg bg-transparent border border-[#00CE51] outline-none"
-            />
-
-            <input
-              maxLength={1}
-              {...register("otp2")}
-              className="w-12 h-12 text-center rounded-lg bg-transparent border border-[#00CE51] outline-none"
-            />
-
-            <input
-              maxLength={1}
-              {...register("otp3")}
-              className="w-12 h-12 text-center rounded-lg bg-transparent border border-[#00CE51] outline-none"
-            />
-
-            <input
-              maxLength={1}
-              {...register("otp4")}
-              className="w-12 h-12 text-center rounded-lg bg-transparent border border-[#00CE51] outline-none"
-            />
-
-            <input
-              maxLength={1}
-              {...register("otp5")}
-              className="w-12 h-12 text-center rounded-lg bg-transparent border border-[#00CE51] outline-none"
-            />
-
-            <input
-              maxLength={1}
-              {...register("otp6")}
-              className="w-12 h-12 text-center rounded-lg bg-transparent border border-[#00CE51] outline-none"
-            />
+            {[1,2,3,4,5,6].map((num) => (
+              <input
+                key={num}
+                type="text"
+                maxLength={1}
+                {...register(`otp${num}`, {
+                  required: true,
+                  pattern: /^[0-9]$/
+                })}
+                className="w-12 h-12 text-center rounded-lg bg-transparent border border-[#00CE51] outline-none"
+              />
+            ))}
 
           </div>
+
+          {/* Error Message */}
+          {(errors.otp1 ||
+            errors.otp2 ||
+            errors.otp3 ||
+            errors.otp4 ||
+            errors.otp5 ||
+            errors.otp6) && (
+            <p className="text-red-500 text-sm text-center">
+              Please enter the 6 digit OTP
+            </p>
+          )}
 
           {/* Button */}
           <button
