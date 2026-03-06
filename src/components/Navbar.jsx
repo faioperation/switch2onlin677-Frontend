@@ -1,78 +1,51 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { Menu } from "lucide-react";
 
 const Navbar = ({ setSidebarOpen }) => {
-    const [open, setOpen] = useState(false);
-    const dropdownRef = useRef(null);
+  return (
+    <header className="py-5 border-b border-[#1F1F1F] bg-[#0B0B0B] flex items-center justify-between px-6">
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setOpen(false);
-            }
-        };
+      {/* Left */}
+      <div className="flex items-center gap-4">
 
-        document.addEventListener("mousedown", handleClickOutside);
+        {/* Mobile Sidebar Toggle */}
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="md:hidden text-gray-400 hover:text-white transition"
+        >
+          <Menu size={22} />
+        </button>
 
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
+        {/* Page Title */}
+        <h1 className="text-lg md:text-2xl font-semibold text-white">
+          Dashboard
+        </h1>
 
-    return (
-        <header className="border-b bg-white">
-            <div className="flex items-center justify-between h-[60px] px-6">
+      </div>
 
-                {/* Left */}
-                <div className="flex items-center gap-4">
+      {/* Right User */}
+      <div className="flex items-center gap-3">
 
-                    <button
-                        onClick={() => setSidebarOpen(true)}
-                        className="p-2 rounded-lg hover:bg-gray-100 md:hidden"
-                    >
-                        <Menu size={22} />
-                    </button>
+        <img
+          src="https://i.pravatar.cc/40"
+          alt="profile"
+          className="w-9 h-9 rounded-full object-cover"
+        />
 
-                    <h1 className="text-lg md:text-xl font-semibold">
-                        AI Beauty Dashboard
-                    </h1>
+        <div className="hidden sm:flex flex-col leading-tight">
+          <span className="text-sm font-medium text-white">
+            Akash Rohman
+          </span>
 
-                </div>
+          <span className="text-xs text-gray-400">
+            Admin
+          </span>
+        </div>
 
-                {/* Right */}
-                <div className="relative" ref={dropdownRef}>
+      </div>
 
-                    <img
-                        src="https://i.pravatar.cc/40"
-                        alt="profile"
-                        onClick={() => setOpen(!open)}
-                        className="w-9 h-9 rounded-full cursor-pointer"
-                    />
-
-                    {open && (
-                        <div className="absolute right-0 mt-3 w-52 bg-white shadow-lg rounded-xl p-4 border animate-fadeIn">
-
-                            <p className="font-semibold text-sm">
-                                Saif
-                            </p>
-
-                            <p className="text-gray-500 text-xs mb-3">
-                                Admin
-                            </p>
-
-                            <button className="w-full text-sm bg-black text-white py-2 rounded-lg hover:bg-gray-800">
-                                Login
-                            </button>
-
-                        </div>
-                    )}
-
-                </div>
-
-            </div>
-        </header>
-    );
+    </header>
+  );
 };
 
 export default Navbar;

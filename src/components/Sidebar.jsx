@@ -1,89 +1,146 @@
 import React from "react";
 import { NavLink } from "react-router";
+import logo from '../assets/Vector.png'
 import {
   LayoutDashboard,
-  BarChart3,
   MessageSquare,
   Users,
-  Settings,
-  LogIn,
+  UserCog,
+  Shield,
+  LogOut,
   X,
   Sparkles,
+  User
 } from "lucide-react";
 
 const Sidebar = ({ closeSidebar }) => {
+
   const linkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition ${
-      isActive
-        ? "bg-black text-white"
-        : "text-gray-700 hover:bg-gray-200"
+    `relative flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all ${isActive
+      ? "text-[#00CE51] bg-gradient-to-r from-[#00CE51]/20 to-transparent"
+      : "text-gray-400 hover:bg-[#1A1A1A] hover:text-white"
     }`;
 
+
   return (
-    <div className="flex flex-col h-full p-4">
+    <div className="flex flex-col h-full bg-[#0B0B0B] border-r border-[#1F1F1F] w-[280px]">
 
-      {/* Top Logo + Close */}
-      <div className="flex items-center justify-between mb-6">
+      {/* Logo */}
+      <div className="flex flex-col items-center py-5">
 
-        <div className="flex items-center gap-2 font-semibold text-lg">
-          <Sparkles size={20} />
-          AI Beauty
+        <div className="flex items-center gap-2 text-white text-lg font-semibold">
+          <img src={logo} alt="logo" className="w-8 h-8" />
+          <h1 className="text-3xl font-semibold">LoGo</h1>
         </div>
 
-        <button
-          onClick={closeSidebar}
-          className="md:hidden p-1 rounded hover:bg-gray-200"
-        >
-          <X size={18} />
-        </button>
-
       </div>
+
+      {/* Divider */}
+      <div className="border-t border-[#1F1F1F] mb-6"></div>
 
       {/* Navigation */}
-      <div className="space-y-2">
+      <nav className="flex flex-col gap-2 px-4 pl-1">
 
         <NavLink to="/" className={linkClass} onClick={closeSidebar}>
-          <LayoutDashboard size={18} />
-          Dashboard
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51] rounded-r" />
+              )}
+
+              <LayoutDashboard size={18} />
+              Dashboard
+            </>
+          )}
+
         </NavLink>
 
-        <NavLink to="/analytics" className={linkClass} onClick={closeSidebar}>
-          <BarChart3 size={18} />
-          Analytics
+        <NavLink to="/conversation" className={linkClass} onClick={closeSidebar}>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+              )}
+
+              <MessageSquare size={18} />
+              Conversation
+            </>
+          )}
         </NavLink>
 
-        <NavLink
-          to="/conversation"
-          className={linkClass}
-          onClick={closeSidebar}
-        >
-          <MessageSquare size={18} />
-          Conversations
-        </NavLink>
+
 
         <NavLink to="/leads" className={linkClass} onClick={closeSidebar}>
-          <Users size={18} />
-          Leads
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+              )}
+              <Users size={18} />
+              Leads
+            </>
+          )}
         </NavLink>
 
-        <NavLink to="/settings" className={linkClass} onClick={closeSidebar}>
-          <Settings size={18} />
-          Settings
+
+        <NavLink to="/agent-manage" className={linkClass} onClick={closeSidebar}>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+              )}
+              <UserCog size={18} />
+              Agent Manage
+            </>
+          )}
         </NavLink>
 
-      </div>
 
-      {/* Bottom Login Button */}
-      <div className="mt-auto pt-6">
+        <NavLink to="/admin-manage" className={linkClass} onClick={closeSidebar}>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+              )}
+              <Shield size={18} />
+              Admin Manage
+            </>
+          )}
+        </NavLink>
 
-        <button className="flex items-center gap-3 w-full px-4 py-2 rounded-lg bg-black text-white text-sm hover:bg-gray-800 transition">
+      </nav>
 
-          <LogIn size={18} />
-          Login
+      {/* Bottom Section */}
+      <div className="mt-auto px-4 pb-6">
+
+        {/* Profile */}
+        <div className="flex items-center gap-3 text-gray-300 mb-4">
+
+          <User size={18} />
+          <span className="text-sm">Profile</span>
+
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-[#1F1F1F] my-4"></div>
+
+        {/* Logout */}
+        <button className="flex items-center gap-3 text-red-400 hover:text-red-500 text-sm transition">
+
+          <LogOut size={18} />
+          Logout
 
         </button>
 
       </div>
+
+      {/* Mobile Close */}
+      <button
+        onClick={closeSidebar}
+        className="absolute top-4 right-4 md:hidden text-gray-400 hover:text-white"
+      >
+        <X size={20} />
+      </button>
 
     </div>
   );
