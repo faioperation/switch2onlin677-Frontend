@@ -7,6 +7,7 @@ import Leads from "../pages/Leads";
 import Settings from "../pages/Settings";
 import Auth from "../layout/Auth";
 import Login from "../pages/Authintication/Login";
+import ForgetPassword from "../pages/Authintication/ForgetPassword";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -41,7 +42,7 @@ export const router = createBrowserRouter([
         element: <Auth></Auth>,
         children: [
           { path: "login", element: <Login></Login> },
-          { path: "register", element: <h1>register page demo</h1> },
+          { path: "forget-password", element: <ForgetPassword></ForgetPassword> },
         ],
       },
 ]);
