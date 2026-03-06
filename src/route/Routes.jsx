@@ -8,6 +8,8 @@ import Settings from "../pages/Settings";
 import Auth from "../layout/Auth";
 import Login from "../pages/Authintication/Login";
 import ForgetPassword from "../pages/Authintication/ForgetPassword";
+import Otp from "../pages/Authintication/Otp";
+import SetPassword from "../pages/Authintication/SetPassword";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -43,6 +45,8 @@ export const router = createBrowserRouter([
         children: [
           { path: "login", element: <Login></Login> },
           { path: "forget-password", element: <ForgetPassword></ForgetPassword> },
+          { path: "otp", element: <Otp></Otp> },
+          { path: "set-password", element: <SetPassword></SetPassword> },
         ],
       },
 ]);
