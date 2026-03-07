@@ -1,16 +1,17 @@
 import { createBrowserRouter } from "react-router";
 import Root from "../layout/Root";
 import Dashboard from "../pages/Dashboard";
-import Analytics from "../pages/Analytics";
 import Conversations from "../pages/Conversations";
 import Leads from "../pages/Leads";
-import Settings from "../pages/Settings";
 import Auth from "../layout/Auth";
 import Login from "../pages/Authintication/Login";
 import ForgetPassword from "../pages/Authintication/ForgetPassword";
 import Otp from "../pages/Authintication/Otp";
 import SetPassword from "../pages/Authintication/SetPassword";
 import PasswordSuccessfull from "../pages/Authintication/PasswordSuccessfull";
+import AgentManage from "../pages/AgentManage";
+import AdminManage from "../pages/AdminManage";
+import Profile from "../pages/Profile";
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -22,8 +23,8 @@ export const router = createBrowserRouter([
                 element: <Dashboard></Dashboard>
             },
             {
-                path: "analytics",
-                element: <Analytics></Analytics>
+                path: "agent-Manage",
+                element: <AgentManage></AgentManage>
             },
             {
                 path: "conversation",
@@ -34,8 +35,12 @@ export const router = createBrowserRouter([
                 element: <Leads></Leads>
             },
             {
-                path: "settings",
-                element: <Settings></Settings>
+                path: "admin-manage",
+                element: <AdminManage></AdminManage>
+            },
+            {
+                path: "profile",
+                element: <Profile></Profile>
             },
 
         ]

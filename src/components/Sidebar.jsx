@@ -111,26 +111,42 @@ const Sidebar = ({ closeSidebar }) => {
       </nav>
 
       {/* Bottom Section */}
-      <div className="mt-auto px-4 pb-6">
+      <div className="mt-auto pb-10 flex flex-col">
 
         {/* Profile */}
-        <div className="flex items-center gap-3 text-gray-300 mb-4">
+        <NavLink
+          to="/profile"
+          onClick={closeSidebar}
+          className={linkClass}>
+            {({ isActive }) => (
+          <>
+            {isActive && (
+              <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
+            )}
+            <User size={18} />
+            <span>Profile</span>
+          </>
+          )}
 
-          <User size={18} />
-          <span className="text-sm">Profile</span>
 
-        </div>
+        </NavLink>
 
         {/* Divider */}
         <div className="border-t border-[#1F1F1F] my-4"></div>
 
         {/* Logout */}
-        <button className="flex items-center gap-3 text-red-400 hover:text-red-500 text-sm transition">
-
+        <button
+          onClick={() => console.log("logout")}
+          className="flex items-center gap-3 text-red-400 hover:text-red-500 text-sm transition px-5"
+        >
           <LogOut size={18} />
           Logout
-
         </button>
+
+
+
+        {/* Profile */}
+
 
       </div>
 
