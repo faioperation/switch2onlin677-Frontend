@@ -2,7 +2,7 @@ import { Pencil } from "lucide-react";
 
 const ProfileCard = ({ profile, openEdit, openPassword }) => {
   return (
-    <div className="w-full max-w-2xl h-[500px] bg-[#222222] border border-[#3A3A3A] rounded-xl p-6 md:p-8 relative">
+    <div className="w-full max-w-4xl h-[500px] bg-[#222222] border border-[#3A3A3A] rounded-xl p-6 md:p-8 relative">
 
       {/* Edit Icon */}
       <button
