@@ -23,7 +23,7 @@ const Sidebar = ({ closeSidebar }) => {
 
 
   return (
-    <div className="flex flex-col h-full bg-[#0B0B0B] border-r border-[#1F1F1F] w-[280px]">
+    <div className="flex flex-col min-h-screen bg-[#0B0B0B] border-r border-[#1F1F1F] w-[280px]">
 
       {/* Logo */}
       <div className="flex flex-col items-center py-5">
@@ -39,13 +39,13 @@ const Sidebar = ({ closeSidebar }) => {
       <div className="border-t border-[#1F1F1F] mb-6"></div>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-2 px-4 pl-1">
+      <nav className="flex flex-col gap-2 px-4 pl-0">
 
         <NavLink to="/" className={linkClass} onClick={closeSidebar}>
           {({ isActive }) => (
             <>
               {isActive && (
-                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51] rounded-r" />
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51] rounded-r" />
               )}
 
               <LayoutDashboard size={18} />
@@ -59,7 +59,7 @@ const Sidebar = ({ closeSidebar }) => {
           {({ isActive }) => (
             <>
               {isActive && (
-                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
               )}
 
               <MessageSquare size={18} />
@@ -74,7 +74,7 @@ const Sidebar = ({ closeSidebar }) => {
           {({ isActive }) => (
             <>
               {isActive && (
-                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
               )}
               <Users size={18} />
               Leads
@@ -87,7 +87,7 @@ const Sidebar = ({ closeSidebar }) => {
           {({ isActive }) => (
             <>
               {isActive && (
-                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
               )}
               <UserCog size={18} />
               Agent Manage
@@ -100,7 +100,7 @@ const Sidebar = ({ closeSidebar }) => {
           {({ isActive }) => (
             <>
               {isActive && (
-                <span className="absolute left-0 top-0 h-full w-[3px] bg-[#00CE51]" />
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
               )}
               <Shield size={18} />
               Admin Manage
