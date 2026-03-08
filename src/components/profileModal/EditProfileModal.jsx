@@ -68,12 +68,12 @@ const EditProfileModal = ({ close, profile }) => {
 
     <div
       onClick={close}
-      className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-[#80808080] backdrop-blur-md flex items-center justify-center p-4 z-50"
     >
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[#1A1A1A] w-full max-w-md p-6 rounded-xl border border-[#262626]"
+        className="bg-[#1A1A1A] w-full max-w-3xl p-6 rounded-xl border border-[#262626]"
       >
 
         <h3 className="text-white text-2xl mb-6">
@@ -161,7 +161,7 @@ const EditProfileModal = ({ close, profile }) => {
 
             <button
               type="submit"
-              className="bg-[#00CE51] text-black px-4 py-2 rounded-md text-sm"
+              className="bg-[#00CE51] text-white px-4 py-2 rounded-md text-sm"
             >
               Save Change
             </button>

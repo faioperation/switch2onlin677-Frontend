@@ -28,20 +28,20 @@ const Conversations = () => {
 
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const activeUser =
-    selectedUser || conversations[0];
+  const activeUser = selectedUser || conversations[0];
 
   const userMessages = messages.filter(
     (msg) => msg.userId === activeUser?.id
   );
 
   return (
+
     <div className="h-[calc(100vh-70px)]">
 
-      <div className="h-full grid grid-cols-12 bg-[#1A1A1A] border border-[#262626] rounded-xl overflow-hidden">
+      <div className="h-full bg-[#1A1A1A] border border-[#262626] rounded-xl overflow-hidden flex flex-col md:flex-row">
 
         {/* Conversation List */}
-        <div className="col-span-12 md:col-span-4 lg:col-span-3 border-r border-[#262626]">
+        <div className="w-full md:w-[400px] md:border-r border-[#262626] md:h-full h-[40%] overflow-y-auto">
 
           <ConversationList
             conversations={conversations}
@@ -52,7 +52,7 @@ const Conversations = () => {
         </div>
 
         {/* Chat Area */}
-        <div className="col-span-12 md:col-span-8 lg:col-span-9 flex flex-col">
+        <div className="flex flex-col flex-1 md:h-full h-[60%]">
 
           {activeUser && (
             <>

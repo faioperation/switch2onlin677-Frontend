@@ -50,7 +50,7 @@ const ConversationList = ({
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 text-xs">
+        <div className="flex gap-2 text-xs overflow-x-auto pb-2">
 
           {["All", "facebook", "instagram", "whatsapp"].map((type) => (
             <button
@@ -70,7 +70,7 @@ const ConversationList = ({
 
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex flex-col">
 
         {filtered.map((item) => (
           <ConversationItem
