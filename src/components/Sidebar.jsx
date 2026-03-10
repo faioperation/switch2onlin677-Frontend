@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import logo from '../assets/Vector.png'
 import {
   LayoutDashboard,
@@ -12,8 +12,19 @@ import {
   Sparkles,
   User
 } from "lucide-react";
+import { useAuth } from "../pages/Provider/AuthProvider";
+import { toast } from "react-toastify";
 
 const Sidebar = ({ closeSidebar }) => {
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    toast("Logout Successfully!")
+    navigate("/auth/login");
+  };
 
   const linkClass = ({ isActive }) =>
     `relative flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all ${isActive
@@ -118,14 +129,14 @@ const Sidebar = ({ closeSidebar }) => {
           to="/profile"
           onClick={closeSidebar}
           className={linkClass}>
-            {({ isActive }) => (
-          <>
-            {isActive && (
-              <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
-            )}
-            <User size={18} />
-            <span>Profile</span>
-          </>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
+              )}
+              <User size={18} />
+              <span>Profile</span>
+            </>
           )}
 
 
@@ -136,7 +147,7 @@ const Sidebar = ({ closeSidebar }) => {
 
         {/* Logout */}
         <button
-          onClick={() => console.log("logout")}
+          onClick={handleLogout}
           className="flex items-center gap-3 text-red-400 hover:text-red-500 text-sm transition px-5"
         >
           <LogOut size={18} />
