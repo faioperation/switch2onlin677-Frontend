@@ -23,7 +23,7 @@ const Login = () => {
     try {
 
       const res = await axios.post(
-        "http://test11.fireai.agency/auth/login/",
+        "https://test11.fireai.agency/auth/login/",
         data
       );
 

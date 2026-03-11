@@ -1,67 +1,69 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxios";
+import { toast } from "react-toastify";
 
 const EditProfileModal = ({ close, profile }) => {
 
+  const axiosSecure = useAxiosSecure();
+
   const { register, handleSubmit } = useForm({
-    defaultValues: profile
-  });
-
-  const [imagePreview, setImagePreview] = useState(profile?.avatar);
-
-  // TanStack mutation (future backend ready)
-  const mutation = useMutation({
-    mutationFn: async (data) => {
-      const res = await fetch("/profile.json", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
-
-      return res.json();
-    },
-    onSuccess: () => {
-      alert("Profile updated successfully!");
-      close();
+    defaultValues: {
+      name: profile?.name,
+      email: profile?.email
     }
   });
 
-  // Image upload to imgbb
-  const handleImageUpload = async (e) => {
+  const [imagePreview, setImagePreview] = useState(profile?.profile_image);
+  const [imageFile, setImageFile] = useState(null);
 
-    const image = e.target.files[0];
+  /* ======================
+        Image Preview
+  ====================== */
 
-    if (!image) return;
+  const handleImageChange = (e) => {
 
-    const formData = new FormData();
-    formData.append("image", image);
+    const file = e.target.files[0];
 
-    const apiKey = "YOUR_IMGBB_API_KEY";
+    if (!file) return;
 
-    const res = await fetch(
-      `https://api.imgbb.com/1/upload?key=${apiKey}`,
-      {
-        method: "POST",
-        body: formData
-      }
-    );
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
 
-    const data = await res.json();
-
-    setImagePreview(data.data.url);
   };
 
-  const onSubmit = (data) => {
+  /* ======================
+        Submit Profile
+  ====================== */
 
-    const updatedData = {
-      ...data,
-      avatar: imagePreview
-    };
+  const onSubmit = async (data) => {
 
-    mutation.mutate(updatedData);
+    try {
+
+      const formData = new FormData();
+
+      formData.append("name", data.name);
+
+      if (imageFile) {
+        formData.append("profile_image", imageFile);
+      }
+
+      const res = await axiosSecure.patch("/auth/me/", formData);
+
+      console.log(res.data);
+
+      toast.success("Profile updated successfully 🎉");
+
+      close();
+
+    } catch (error) {
+
+      console.log(error.response?.data);
+
+      toast.error("Failed to update profile ❌");
+
+    }
+
   };
 
   return (
@@ -83,10 +85,11 @@ const EditProfileModal = ({ close, profile }) => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
           {/* Avatar Upload */}
+
           <div className="flex items-center gap-4">
 
             <img
-              src={imagePreview}
+              src={imagePreview || "/default-avatar.png"}
               alt="avatar"
               className="w-14 h-14 rounded-full object-cover"
             />
@@ -98,7 +101,7 @@ const EditProfileModal = ({ close, profile }) => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={handleImageChange}
                 className="hidden"
               />
 
@@ -107,6 +110,7 @@ const EditProfileModal = ({ close, profile }) => {
           </div>
 
           {/* Name */}
+
           <div>
 
             <label className="text-xs text-gray-400 mb-1 block">
@@ -120,7 +124,8 @@ const EditProfileModal = ({ close, profile }) => {
 
           </div>
 
-          {/* Email */}
+          {/* Email (Readonly) */}
+
           <div>
 
             <label className="text-xs text-gray-400 mb-1 block">
@@ -129,26 +134,14 @@ const EditProfileModal = ({ close, profile }) => {
 
             <input
               {...register("email")}
-              className="w-full bg-[#111] border border-[#3A3A3A] rounded-md px-3 py-2 text-white text-sm"
-            />
-
-          </div>
-
-          {/* Phone */}
-          <div>
-
-            <label className="text-xs text-gray-400 mb-1 block">
-              Number
-            </label>
-
-            <input
-              {...register("phone")}
-              className="w-full bg-[#111] border border-[#3A3A3A] rounded-md px-3 py-2 text-white text-sm"
+              readOnly
+              className="w-full bg-[#111] border border-[#3A3A3A] rounded-md px-3 py-2 text-gray-400 text-sm cursor-not-allowed"
             />
 
           </div>
 
           {/* Buttons */}
+
           <div className="flex justify-end gap-3 pt-3">
 
             <button
@@ -173,7 +166,9 @@ const EditProfileModal = ({ close, profile }) => {
       </div>
 
     </div>
+
   );
+
 };
 
 export default EditProfileModal;
