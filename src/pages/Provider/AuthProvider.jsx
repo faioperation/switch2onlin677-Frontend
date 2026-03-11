@@ -1,12 +1,36 @@
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "./AuthContext";
-import Loader from "../../components/Loader";
+import useAxiosSecure from "../../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
 
 export const AuthProvider = ({ children }) => {
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const axiosSecure = useAxiosSecure();
+
+  const token = localStorage.getItem("accessToken");
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile"],
+    enabled: !!token,
+    queryFn: async () => {
+      const res = await axiosSecure.get("/auth/me/");
+      return res.data;
+    },
+
+    // ⚡ performance improve
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    refetchOnWindowFocus: false,
+    retry: 1
+  });
+
+  const avatar = profile?.profile_image
+    ? `https://test11.fireai.agency${profile.profile_image}`
+    : "https://i.ibb.co/2kRZ0y9/user.png";
+
+  // login
   const login = (data) => {
 
     const userData = data.user;
@@ -18,6 +42,7 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
+  // logout
   const logout = () => {
 
     localStorage.removeItem("accessToken");
@@ -26,7 +51,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // page refresh হলে user load
   useEffect(() => {
 
     const savedUser = localStorage.getItem("user");
@@ -43,12 +67,10 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    loading
+    loading: loading || isLoading,
+    profile,
+    avatar
   };
-
-  if (loading) {
-    return <Loader></Loader>
-  }
 
   return (
     <AuthContext value={authinfo}>

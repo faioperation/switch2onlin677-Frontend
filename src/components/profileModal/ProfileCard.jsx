@@ -1,16 +1,10 @@
 import { Pencil } from "lucide-react";
 
-const ProfileCard = ({ profile, openEdit, openPassword }) => {
-
-  const avatar =
-    profile.profile_image ||
-    "https://i.ibb.co/2kRZ0y9/user.png";
+const ProfileCard = ({ profile, openEdit, openPassword , avatar }) => {
 
   return (
 
     <div className="w-full max-w-4xl h-[500px] bg-[#222222] border border-[#3A3A3A] rounded-xl p-6 md:p-8 relative">
-
-      {/* Edit Button */}
 
       <button
         onClick={openEdit}
@@ -19,13 +13,9 @@ const ProfileCard = ({ profile, openEdit, openPassword }) => {
         <Pencil size={15} />
       </button>
 
-      {/* Title */}
-
       <h2 className="text-white text-2xl font-semibold mb-6">
         Profile
       </h2>
-
-      {/* Avatar */}
 
       <div className="flex items-center justify-between mb-6">
 
@@ -60,11 +50,7 @@ const ProfileCard = ({ profile, openEdit, openPassword }) => {
 
       </div>
 
-      {/* Fields */}
-
       <div className="space-y-5">
-
-        {/* Name */}
 
         <div>
 
@@ -78,8 +64,6 @@ const ProfileCard = ({ profile, openEdit, openPassword }) => {
 
         </div>
 
-        {/* Email */}
-
         <div>
 
           <label className="block text-sm text-white mb-2">
@@ -91,8 +75,6 @@ const ProfileCard = ({ profile, openEdit, openPassword }) => {
           </div>
 
         </div>
-
-        {/* Role */}
 
         <div>
 
@@ -111,6 +93,7 @@ const ProfileCard = ({ profile, openEdit, openPassword }) => {
     </div>
 
   );
+
 };
 
 export default ProfileCard;

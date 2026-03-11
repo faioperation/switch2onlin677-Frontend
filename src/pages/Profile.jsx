@@ -6,28 +6,19 @@ import ChangePasswordModal from "../components/profileModal/ChangePasswordModal"
 import ProfileCard from "../components/profileModal/ProfileCard";
 import useAxiosSecure from "../hooks/useAxios";
 import Loader from "../components/Loader";
+import { useAuth } from "./Provider/AuthProvider";
 
 const Profile = () => {
 
   const [editOpen, setEditOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
 
-  const axiosSecure = useAxiosSecure();
+  const { profile, avatar, loading } = useAuth();
 
-  const { data: profile, isLoading , refetch } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => {
-
-      const res = await axiosSecure.get("/auth/me/");
-      return res.data;
-      refetch();
-
-    }
-  });
-
-  if (isLoading) {
+  if (loading) {
     return <Loader />;
   }
+
 
   return (
 
@@ -37,6 +28,7 @@ const Profile = () => {
 
         <ProfileCard
           profile={profile}
+          avatar={avatar}
           openEdit={() => setEditOpen(true)}
           openPassword={() => setPasswordOpen(true)}
         />
@@ -47,6 +39,7 @@ const Profile = () => {
 
         <EditProfileModal
           profile={profile}
+          avatar={avatar}
           close={() => setEditOpen(false)}
         />
 
@@ -63,6 +56,7 @@ const Profile = () => {
     </div>
 
   );
+
 };
 
 export default Profile;

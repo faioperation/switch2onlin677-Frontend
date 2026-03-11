@@ -1,33 +1,82 @@
-import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { fetchAgentConfig, saveAgentMessage } from "../../api/agentApi";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxios";
+import { toast } from "react-toastify";
 
-const AgentMessageSetup = () => {
+const AgentMessageSetup = ({ data }) => {
 
-  const { data } = useQuery({
-    queryKey: ["agent-config"],
-    queryFn: fetchAgentConfig,
-  });
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
-  const [firstMessage, setFirstMessage] = useState("");
+  const [openingMessage, setOpeningMessage] = useState("");
   const [closingMessage, setClosingMessage] = useState("");
 
-  const mutation = useMutation({
-    mutationFn: saveAgentMessage,
-    onSuccess: () => {
-      alert("Message saved successfully!");
-    },
-  });
+  // existing message show
+  useEffect(() => {
 
-  const handleSubmit = () => {
+    if (data) {
+      setOpeningMessage(data?.opening_message || "");
+      setClosingMessage(data?.closing_message || "");
+    }
 
-    const payload = {
-      id: data?.id,
-      firstMessage,
-      closingMessage,
-    };
+  }, [data]);
 
-    mutation.mutate(payload);
+  const handleSubmit = async () => {
+
+    if (!openingMessage.trim() || !closingMessage.trim()) {
+      toast.error("Message cannot be empty ❌");
+      return;
+    }
+
+    if (
+      data &&
+      openingMessage === data?.opening_message &&
+      closingMessage === data?.closing_message
+    ) {
+      toast.info("No changes detected ⚠️");
+      return;
+    }
+
+    try {
+
+      const payload = {
+        opening_message: openingMessage,
+        closing_message: closingMessage
+      };
+
+      if (data?.id) {
+
+        const res = await axiosSecure.patch(
+          "/api/v1/agent-behavior/",
+          payload
+        );
+
+        console.log("PATCH agent-behavior:", res.data);
+
+        toast.success("Message has been changed ✅");
+
+      } else {
+
+        const res = await axiosSecure.post(
+          "/api/v1/agent-behavior/",
+          payload
+        );
+
+        console.log("POST agent-behavior:", res.data);
+
+        toast.success("Message saved successfully 🎉");
+
+      }
+
+      queryClient.invalidateQueries(["agent-behavior"]);
+
+    } catch (error) {
+
+      console.log("Submit error:", error.response?.data);
+      toast.error("Failed to save message ❌");
+
+    }
+
   };
 
   return (
@@ -46,8 +95,8 @@ const AgentMessageSetup = () => {
           </p>
 
           <textarea
-            value={firstMessage}
-            onChange={(e)=>setFirstMessage(e.target.value)}
+            value={openingMessage}
+            onChange={(e) => setOpeningMessage(e.target.value)}
             placeholder="Type message"
             className="w-full h-28 bg-[#111] border border-[#2A2A2A] rounded-lg p-3 text-white text-sm"
           />
@@ -60,7 +109,7 @@ const AgentMessageSetup = () => {
 
           <textarea
             value={closingMessage}
-            onChange={(e)=>setClosingMessage(e.target.value)}
+            onChange={(e) => setClosingMessage(e.target.value)}
             placeholder="Type message"
             className="w-full h-28 bg-[#111] border border-[#2A2A2A] rounded-lg p-3 text-white text-sm"
           />
@@ -78,6 +127,7 @@ const AgentMessageSetup = () => {
     </div>
 
   );
+
 };
 
 export default AgentMessageSetup;

@@ -1,39 +1,73 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { updateTone } from "../../api/agentApi";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxios";
+import { toast } from "react-toastify";
 
 const tones = [
-  {
-    id: "friendly",
-    title: "Friendly & Warm",
-    desc: "Conversational and welcoming",
-  },
-  {
-    id: "professional",
-    title: "Professional",
-    desc: "Formal and business-like",
-  },
-  {
-    id: "sales",
-    title: "Sales-Oriented",
-    desc: "Persuasive and promotional",
-  },
+  { id: "friendly", title: "Friendly & Warm", desc: "Conversational and welcoming" },
+  { id: "professional", title: "Professional", desc: "Formal and business-like" },
+  { id: "sales", title: "Sales-Oriented", desc: "Persuasive and promotional" }
 ];
 
-const TonePersonality = () => {
+const TonePersonality = ({ data }) => {
+
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
   const [selected, setSelected] = useState("friendly");
 
-  const mutation = useMutation({
-    mutationFn: updateTone,
-    onSuccess: () => {
-      alert("Tone updated successfully!");
-    },
-  });
+  useEffect(() => {
 
-  const handleSelect = (tone) => {
-    setSelected(tone);
-    mutation.mutate(tone);
+    if (data?.tone) {
+      setSelected(data.tone);
+    }
+
+  }, [data]);
+
+  const handleSelect = async (tone) => {
+
+    if (tone === selected) {
+      toast.info("No changes detected ⚠️");
+      return;
+    }
+
+    try {
+
+      const payload = { tone };
+
+      if (data?.id) {
+
+        const res = await axiosSecure.patch(
+          "/api/v1/agent-behavior/",
+          payload
+        );
+
+        console.log("PATCH tone:", res.data);
+
+      } else {
+
+        const res = await axiosSecure.post(
+          "/api/v1/agent-behavior/",
+          payload
+        );
+
+        console.log("POST tone:", res.data);
+
+      }
+
+      setSelected(tone);
+
+      queryClient.invalidateQueries(["agent-behavior"]);
+
+      toast.success("Tone updated successfully ✅");
+
+    } catch (error) {
+
+      console.log("Tone update error:", error.response?.data);
+      toast.error("Failed to update tone ❌");
+
+    }
+
   };
 
   return (
@@ -54,8 +88,8 @@ const TonePersonality = () => {
 
           <div
             key={tone.id}
-            onClick={()=>handleSelect(tone.id)}
-            className={`p-4 rounded-lg border cursor-pointer transition mt-4
+            onClick={() => handleSelect(tone.id)}
+            className={`p-4 rounded-lg border cursor-pointer transition
             ${
               selected === tone.id
                 ? "border-green-500 bg-[#1f2a23]"
@@ -94,15 +128,10 @@ const TonePersonality = () => {
 
       </div>
 
-      <button
-        className="btn-primary  md:mt-12"
-      >
-        Save Scripts
-      </button>
-
     </div>
 
   );
+
 };
 
 export default TonePersonality;

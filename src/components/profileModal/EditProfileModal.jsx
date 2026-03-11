@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import useAxiosSecure from "../../hooks/useAxios";
 import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxios";
 
-const EditProfileModal = ({ close, profile }) => {
+const EditProfileModal = ({ close, profile, avatar }) => {
 
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
   const { register, handleSubmit } = useForm({
     defaultValues: {
@@ -14,17 +16,12 @@ const EditProfileModal = ({ close, profile }) => {
     }
   });
 
-  const [imagePreview, setImagePreview] = useState(profile?.profile_image);
+  const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
-
-  /* ======================
-        Image Preview
-  ====================== */
 
   const handleImageChange = (e) => {
 
     const file = e.target.files[0];
-
     if (!file) return;
 
     setImageFile(file);
@@ -32,16 +29,11 @@ const EditProfileModal = ({ close, profile }) => {
 
   };
 
-  /* ======================
-        Submit Profile
-  ====================== */
-
   const onSubmit = async (data) => {
 
     try {
 
       const formData = new FormData();
-
       formData.append("name", data.name);
 
       if (imageFile) {
@@ -50,16 +42,17 @@ const EditProfileModal = ({ close, profile }) => {
 
       const res = await axiosSecure.patch("/auth/me/", formData);
 
-      console.log(res.data);
-
       toast.success("Profile updated successfully 🎉");
+
+      // React Query cache update
+      queryClient.setQueryData(["profile"], res.data);
+      queryClient.invalidateQueries(["profile"]);
 
       close();
 
     } catch (error) {
 
       console.log(error.response?.data);
-
       toast.error("Failed to update profile ❌");
 
     }
@@ -84,12 +77,10 @@ const EditProfileModal = ({ close, profile }) => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
-          {/* Avatar Upload */}
-
           <div className="flex items-center gap-4">
 
             <img
-              src={imagePreview || "/default-avatar.png"}
+              src={imagePreview || avatar || "/default-avatar.png"}
               alt="avatar"
               className="w-14 h-14 rounded-full object-cover"
             />
@@ -109,8 +100,6 @@ const EditProfileModal = ({ close, profile }) => {
 
           </div>
 
-          {/* Name */}
-
           <div>
 
             <label className="text-xs text-gray-400 mb-1 block">
@@ -123,8 +112,6 @@ const EditProfileModal = ({ close, profile }) => {
             />
 
           </div>
-
-          {/* Email (Readonly) */}
 
           <div>
 
@@ -140,8 +127,6 @@ const EditProfileModal = ({ close, profile }) => {
 
           </div>
 
-          {/* Buttons */}
-
           <div className="flex justify-end gap-3 pt-3">
 
             <button
@@ -154,7 +139,7 @@ const EditProfileModal = ({ close, profile }) => {
 
             <button
               type="submit"
-              className="bg-[#00CE51] text-white px-4 py-2 rounded-md text-sm"
+              className="bg-[#00CE51] hover:bg-[#035022] text-white px-4 py-2 rounded-md text-sm"
             >
               Save Change
             </button>
