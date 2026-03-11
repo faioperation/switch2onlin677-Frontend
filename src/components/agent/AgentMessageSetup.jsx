@@ -81,7 +81,7 @@ const AgentMessageSetup = ({ data }) => {
 
   return (
 
-    <div className="bg-[#1A1A1A] border border-[#262626] rounded-xl p-6">
+    <div className="bg-[#1A1A1A] border border-[#262626] rounded-xl p-3 md:p-6">
 
       <h3 className="text-white text-lg font-medium mb-4">
         Agent Message Setup

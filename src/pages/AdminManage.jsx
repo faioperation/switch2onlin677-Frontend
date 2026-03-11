@@ -80,7 +80,7 @@ const AdminManage = () => {
   };
 
   if (isLoading) {
-    return <Loader></Loader>
+    return <Loader />;
   }
 
   return (
@@ -108,9 +108,15 @@ const AdminManage = () => {
 
       <div className="bg-[#1A1A1A] border border-[#262626] rounded-xl overflow-hidden">
 
-        <div className="overflow-x-auto">
+        {/* Mobile swipe hint */}
 
-          <table className="min-w-[520px] w-full text-sm text-left">
+        <div className="sm:hidden text-xs text-gray-400 px-3 py-2 border-b border-[#262626]">
+          ← Swipe to see more →
+        </div>
+
+        <div className="overflow-x-auto scrollbar-hide scroll-smooth">
+
+          <table className="min-w-[720px] w-full text-sm text-left">
 
             <thead className="bg-[#253029] text-gray-300">
 
@@ -118,9 +124,7 @@ const AdminManage = () => {
                 <th className="p-3">#</th>
                 <th className="p-3">Name</th>
                 <th className="p-3">Email</th>
-                <th className="hidden md:table-cell p-3">
-                  Last Active
-                </th>
+                <th className="p-3">Last Active</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
               </tr>
@@ -148,8 +152,8 @@ const AdminManage = () => {
                     {admin.email}
                   </td>
 
-                  <td className="hidden md:table-cell p-3 text-gray-400">
-                    {admin.last_active}
+                  <td className="p-3 text-gray-400">
+                    {admin.last_active || "N/A"}
                   </td>
 
                   <td className="p-3">

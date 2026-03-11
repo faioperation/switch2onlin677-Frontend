@@ -3,17 +3,23 @@ import { Navigate, Outlet } from "react-router";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../pages/Provider/AuthProvider";
+import Loader from "../components/Loader";
+
 
 const Root = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <Loader />;
+  }
 
   // user না থাকলে login page
-  // if (!user) {
-  //   return <Navigate to="/auth/login" replace />;
-  // }
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
+  }
 
   return (
 

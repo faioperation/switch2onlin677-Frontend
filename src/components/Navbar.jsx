@@ -1,6 +1,6 @@
 import React from "react";
 import { Menu } from "lucide-react";
-import { useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useAuth } from "../pages/Provider/AuthProvider";
 
 
@@ -9,7 +9,7 @@ const Navbar = ({ setSidebarOpen }) => {
 
 
   const location = useLocation();
-  const { profile, avatar ,loading } = useAuth();
+  const { profile, avatar, loading } = useAuth();
 
 
   // dynamic title
@@ -46,27 +46,29 @@ const Navbar = ({ setSidebarOpen }) => {
 
       {/* Right User */}
 
-        {!loading && (
-          <div className="flex items-center gap-3">
+      {!loading && (
+        <div className="flex items-center gap-3">
 
+          <Link to={'/profile'}>
             <img
               src={avatar}
               alt="profile"
               className="w-9 h-9 rounded-full object-cover"
             />
+          </Link>
 
-            <div className="hidden sm:flex flex-col leading-tight">
-              <span className="text-sm font-medium text-white">
-                {profile?.name}
-              </span>
+          <div className="hidden sm:flex flex-col leading-tight">
+            <span className="text-sm font-medium text-white">
+              {profile?.name}
+            </span>
 
-              <span className="text-xs text-gray-400">
-                {profile?.role}
-              </span>
-            </div>
-
+            <span className="text-xs text-gray-400">
+              {profile?.role}
+            </span>
           </div>
-        )}
+
+        </div>
+      )}
 
     </header>
   );

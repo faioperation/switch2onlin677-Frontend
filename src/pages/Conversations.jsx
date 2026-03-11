@@ -41,7 +41,7 @@ const Conversations = () => {
       <div className="h-full bg-[#1A1A1A] border border-[#262626] rounded-xl overflow-hidden flex flex-col md:flex-row">
 
         {/* Conversation List */}
-        <div className="w-full md:w-[400px] md:border-r border-[#262626] md:h-full h-[40%] overflow-y-auto">
+        <div className="w-full md:w-[400px] md:border-r border-[#262626] md:h-full h-[30%] overflow-y-auto">
 
           <ConversationList
             conversations={conversations}
@@ -52,7 +52,7 @@ const Conversations = () => {
         </div>
 
         {/* Chat Area */}
-        <div className="flex flex-col flex-1 md:h-full h-[60%]">
+        <div className="flex flex-col flex-1 md:h-full h-[70%] border-t border-[#00CE51] md:border-none">
 
           {activeUser && (
             <>

@@ -43,7 +43,7 @@ const ProfileCard = ({ profile, openEdit, openPassword , avatar }) => {
 
         <button
           onClick={openPassword}
-          className="text-md bg-[#2A2A2A] hover:bg-[#333] px-4 py-1.5 rounded-md text-white transition"
+          className="text-xs md:text-md bg-[#2A2A2A] hover:bg-[#333] px-4 py-2 md:py-1.5 rounded-md text-white transition"
         >
           Change Password
         </button>
