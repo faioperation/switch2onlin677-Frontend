@@ -1,6 +1,6 @@
 import { Search, SlidersHorizontal, Download } from "lucide-react";
 
-const LeadsHeader = ({ search, setSearch, platform, setPlatform }) => {
+const LeadsHeader = ({ search, setSearch, platform, setPlatform, onExport }) => {
 
   return (
     <div className="flex justify-between items-center flex-wrap gap-4 mb-6">
@@ -39,7 +39,10 @@ const LeadsHeader = ({ search, setSearch, platform, setPlatform }) => {
         </select>
 
         {/* Export */}
-        <button className="flex items-center gap-2 bg-[#00CE51] text-black px-3 py-2 rounded-lg text-sm font-medium">
+        <button
+          onClick={onExport}
+          className="flex items-center gap-2 bg-[#00CE51] text-black px-3 py-2 rounded-lg text-sm font-medium"
+        >
           <Download size={16} />
           Export CSV
         </button>

@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/Vector.png";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
+import useAxiosSecure from "../../hooks/useAxios";
+import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 
 const SetPassword = () => {
-        const navigate = useNavigate();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const axiosSecure = useAxiosSecure();
+
+  const email = location.state?.email;
+
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -15,18 +26,44 @@ const SetPassword = () => {
 
   const newPassword = watch("newPassword");
 
-  const onSubmit = (data) => {
-    console.log(data);
-     navigate("/auth/password-successfull");
+  const onSubmit = async (data) => {
+
+    if (!email) {
+      toast.error("Email not found. Please try again.");
+      navigate("/auth/forget-password");
+      return;
+    }
+
+    try {
+
+      const res = await axiosSecure.post("/auth/reset-password/", {
+        email: email,
+        new_password: data.newPassword,
+        confirm_password: data.confirmPassword
+      });
+
+      console.log(res.data);
+
+      toast.success("Password Reset Successful");
+
+      navigate("/auth/password-successfull");
+
+    } catch (error) {
+
+      console.log(error.response?.data);
+      toast.error("Failed to reset password");
+
+    }
+
   };
 
   return (
+
     <div className="min-h-screen flex items-center justify-center bg-[#1D1D1D] text-white">
 
-      {/* Card */}
       <div className="w-[650px] border border-[#636363] rounded-2xl p-10 bg-white/3">
 
-        {/* Logo Section */}
+        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
 
           <div className="flex items-center gap-2 mb-3">
@@ -54,18 +91,30 @@ const SetPassword = () => {
               New Password
             </label>
 
-            <input
-              type="password"
-              placeholder="******"
-              {...register("newPassword", {
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters"
-                }
-              })}
-              className="w-full mt-2 px-4 py-3 rounded-lg bg-white/5 border border-[#636363] outline-none focus:border-[#00CE51]"
-            />
+            <div className="relative mt-2">
+
+              <input
+                type={showNewPassword ? "text" : "password"}
+                placeholder="******"
+                {...register("newPassword", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters"
+                  }
+                })}
+                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-[#636363] outline-none focus:border-[#00CE51] pr-10"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              >
+                {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+
+            </div>
 
             {errors.newPassword && (
               <p className="text-red-500 text-sm mt-1">
@@ -82,16 +131,30 @@ const SetPassword = () => {
               Confirm Password
             </label>
 
-            <input
-              type="password"
-              placeholder="******"
-              {...register("confirmPassword", {
-                required: "Please confirm your password",
-                validate: (value) =>
-                  value === newPassword || "Passwords do not match"
-              })}
-              className="w-full mt-2 px-4 py-3 rounded-lg bg-white/5 border border-[#636363] outline-none focus:border-[#00CE51]"
-            />
+            <div className="relative mt-2">
+
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="******"
+                {...register("confirmPassword", {
+                  required: "Please confirm your password",
+                  validate: (value) =>
+                    value === newPassword || "Passwords do not match"
+                })}
+                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-[#636363] outline-none focus:border-[#00CE51] pr-10"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+
+            </div>
 
             {errors.confirmPassword && (
               <p className="text-red-500 text-sm mt-1">

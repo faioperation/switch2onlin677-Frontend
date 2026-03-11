@@ -10,14 +10,15 @@ import {
   LogOut,
   X,
   Sparkles,
-  User
+  User,
+  LogIn
 } from "lucide-react";
 import { useAuth } from "../pages/Provider/AuthProvider";
 import { toast } from "react-toastify";
 
 const Sidebar = ({ closeSidebar }) => {
 
-  const { logout } = useAuth();
+  const { logout , user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -50,7 +51,7 @@ const Sidebar = ({ closeSidebar }) => {
       <div className="border-t border-[#1F1F1F] mb-6"></div>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-2 px-4 pl-0">
+      <nav className="flex flex-col gap-2 pr-4 pl-0">
 
         <NavLink to="/" className={linkClass} onClick={closeSidebar}>
           {({ isActive }) => (
@@ -145,18 +146,29 @@ const Sidebar = ({ closeSidebar }) => {
         {/* Divider */}
         <div className="border-t border-[#1F1F1F] my-4"></div>
 
-        {/* Logout */}
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 text-red-400 hover:text-red-500 text-sm transition px-5"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
+        <div>
+          {user ? (
 
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 text-red-400 hover:text-red-500 text-sm transition px-5"
+            >
+              <LogOut size={18} />
+              Logout
+            </button>
 
+          ) : (
 
-        {/* Profile */}
+            <Link
+              to="/auth/login"
+              className="flex items-center gap-3 text-green-400 hover:text-green-500 text-sm transition px-5"
+            >
+              <LogIn size={18} />
+              Login
+            </Link>
+
+          )}
+        </div>    
 
 
       </div>

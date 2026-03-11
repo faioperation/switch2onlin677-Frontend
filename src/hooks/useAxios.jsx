@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 
 const axiosSecure = axios.create({
-  baseURL: "https://charissa-intuitable-corroboratorily.ngrok-free.dev",
+  baseURL: "https://test11.fireai.agency",
 });
 
 const useAxiosSecure = () => {

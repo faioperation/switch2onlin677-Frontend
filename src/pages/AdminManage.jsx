@@ -1,19 +1,94 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import AdminModal from "../components/admin/AdminModal";
 import { Trash } from "lucide-react";
-import { useAdmins } from "../hooks/useAdmin";
+import useAxiosSecure from "../hooks/useAxios";
+import Swal from "sweetalert2";
+import Loader from "../components/Loader";
 
 const AdminManage = () => {
 
-  const { data: admins = [], mutation } = useAdmins();
-
+  const axiosSecure = useAxiosSecure();
   const [open, setOpen] = useState(false);
+
+  /* ======================
+        GET ADMINS
+  ====================== */
+
+  const {
+    data: admins = [],
+    refetch,
+    isLoading
+  } = useQuery({
+    queryKey: ["admins"],
+    queryFn: async () => {
+
+      const res = await axiosSecure.get("/auth/users/");
+      return res.data;
+
+    }
+  });
+
+  /* ======================
+        DELETE ADMIN
+  ====================== */
+
+  const handleDelete = (id) => {
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This admin will be removed!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#00CE51",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+
+      if (result.isConfirmed) {
+
+        try {
+
+          const res = await axiosSecure.delete(`/auth/users/${id}/`);
+
+          console.log(res.data);
+
+          refetch();
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "Admin has been deleted.",
+            icon: "success"
+          });
+
+        } catch (error) {
+
+          console.log(error);
+
+          Swal.fire({
+            title: "Error!",
+            text: "Failed to delete admin.",
+            icon: "error"
+          });
+
+        }
+
+      }
+
+    });
+
+  };
+
+  if (isLoading) {
+    return <Loader></Loader>
+  }
 
   return (
 
     <div className="w-full min-h-[calc(100vh-70px)] pb-6">
 
       {/* Header */}
+
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
 
         <h2 className="text-white text-lg font-semibold">
@@ -22,7 +97,7 @@ const AdminManage = () => {
 
         <button
           onClick={() => setOpen(true)}
-          className="bg-[#00CE51] px-4 py-2 rounded-lg text-sm text-black w-full sm:w-auto"
+          className="bg-[#00CE51] px-4 py-2 rounded-lg text-sm text-white w-full sm:w-auto"
         >
           + Add Admin
         </button>
@@ -30,6 +105,7 @@ const AdminManage = () => {
       </div>
 
       {/* Table */}
+
       <div className="bg-[#1A1A1A] border border-[#262626] rounded-xl overflow-hidden">
 
         <div className="overflow-x-auto">
@@ -42,11 +118,9 @@ const AdminManage = () => {
                 <th className="p-3">#</th>
                 <th className="p-3">Name</th>
                 <th className="p-3">Email</th>
-
                 <th className="hidden md:table-cell p-3">
                   Last Active
                 </th>
-
                 <th className="p-3">Status</th>
                 <th className="p-3">Action</th>
               </tr>
@@ -59,7 +133,7 @@ const AdminManage = () => {
 
                 <tr
                   key={admin.id}
-                  className="border-t border-[#262626] hover:bg-[#202020] transition"
+                  className="border-t border-[#262626] hover:bg-[#202020]"
                 >
 
                   <td className="p-3 text-gray-300">
@@ -75,20 +149,23 @@ const AdminManage = () => {
                   </td>
 
                   <td className="hidden md:table-cell p-3 text-gray-400">
-                    {admin.lastActive}
+                    {admin.last_active}
                   </td>
 
                   <td className="p-3">
                     <span className="bg-[#1f2937] px-3 py-1 rounded-full text-xs text-gray-300">
-                      Admin
+                      {admin.role}
                     </span>
                   </td>
 
                   <td className="p-3">
+
                     <Trash
                       size={16}
+                      onClick={() => handleDelete(admin.id)}
                       className="text-red-500 cursor-pointer hover:text-red-400"
                     />
+
                   </td>
 
                 </tr>
@@ -104,10 +181,11 @@ const AdminManage = () => {
       </div>
 
       {/* Modal */}
+
       {open && (
         <AdminModal
           close={() => setOpen(false)}
-          mutation={mutation}
+          refetch={refetch}
         />
       )}
 

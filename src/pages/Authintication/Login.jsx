@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/Vector.png";
 import { useNavigate } from "react-router";
@@ -7,6 +7,7 @@ import { useAuth } from "../Provider/AuthProvider";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
 
@@ -15,38 +16,39 @@ const Login = () => {
   const axiosSecure = useAxiosSecure();
   const { login } = useAuth();
 
-const onSubmit = async (data) => {
+  const [showPassword, setShowPassword] = useState(false);
 
-  try {
+  const onSubmit = async (data) => {
 
-    const res = await axios.post(
-      "https://charissa-intuitable-corroboratorily.ngrok-free.dev/auth/login/",
-      data
-    );
+    try {
 
-    console.log(res.data);
+      const res = await axios.post(
+        "http://test11.fireai.agency/auth/login/",
+        data
+      );
 
-    Cookies.set("accessToken", res.data.tokens.access);
+      Cookies.set("accessToken", res.data.tokens.access);
 
-    login(res.data);
+      login(res.data);
 
-    navigate("/");
-    toast.success("Login Successfull!")
+      navigate("/");
+      toast.success("Login Successful!");
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(error.response?.data);
-    toast.error("Something went wrong!")
+      console.log(error.response?.data);
+      toast.error("Something went wrong!");
 
-  }
+    }
 
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#1D1D1D] text-white">
 
       <div className="w-[650px] border border-[#636363] rounded-2xl p-10">
 
+        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
 
           <div className="flex items-center gap-2 mb-3">
@@ -64,28 +66,64 @@ const onSubmit = async (data) => {
 
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
+          {/* Email */}
           <div>
-            <label className="text-sm text-gray-300">Email</label>
+
+            <label className="text-sm text-gray-300">
+              Email
+            </label>
 
             <input
               type="email"
               {...register("email", { required: true })}
               className="w-full mt-2 px-4 py-3 rounded-lg bg-white/5 border border-[#636363]"
             />
+
           </div>
 
+          {/* Password */}
           <div>
-            <label className="text-sm text-gray-300">Password</label>
 
-            <input
-              type="password"
-              {...register("password", { required: true })}
-              className="w-full mt-2 px-4 py-3 rounded-lg bg-white/5 border border-[#636363]"
-            />
+            <label className="text-sm text-gray-300">
+              Password
+            </label>
+
+            <div className="relative mt-2">
+
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password", { required: true })}
+                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-[#636363] pr-12"
+              />
+
+              {/* Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+
+            </div>
+
+            {/* Forgot Password */}
+            <div className="flex justify-end mt-2">
+              <button
+                type="button"
+                onClick={() => navigate("/auth/forget-password")}
+                className="text-sm text-[#A4A4A4] hover:text-white transition"
+              >
+                Forgot password?
+              </button>
+            </div>
+
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             className="btn-primary w-full"
