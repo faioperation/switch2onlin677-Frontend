@@ -12,10 +12,12 @@ import PasswordSuccessfull from "../pages/Authintication/PasswordSuccessfull";
 import AgentManage from "../pages/AgentManage";
 import AdminManage from "../pages/AdminManage";
 import Profile from "../pages/Profile";
+import ErrorPage from "../components/ErrorPage";
 export const router = createBrowserRouter([
     {
         path: "/",
         element: <Root></Root>,
+        errorElement: <ErrorPage></ErrorPage>,
         children: [
 
             {
