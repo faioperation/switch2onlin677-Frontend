@@ -27,7 +27,7 @@ const LeadsPagination = ({ page, setPage, totalPages, total, limit }) => {
             onClick={() => setPage(i + 1)}
             className={`px-3 py-1 rounded ${
               page === i + 1
-                ? "bg-[#00CE51] text-black"
+                ? "bg-[#00CE51] text-white"
                 : "bg-[#111] text-gray-300"
             }`}
           >
@@ -39,7 +39,7 @@ const LeadsPagination = ({ page, setPage, totalPages, total, limit }) => {
         <button
           onClick={() => setPage(page + 1)}
           disabled={page === totalPages}
-          className="px-3 py-1 bg-[#00CE51] text-black rounded"
+          className="px-3 py-1 bg-[#00CE51] text-white rounded"
         >
           Next
         </button>

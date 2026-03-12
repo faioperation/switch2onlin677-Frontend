@@ -41,7 +41,7 @@ const LeadsHeader = ({ search, setSearch, platform, setPlatform, onExport }) => 
         {/* Export */}
         <button
           onClick={onExport}
-          className="flex items-center gap-2 bg-[#00CE51] text-black px-3 py-2 rounded-lg text-sm font-medium"
+          className="flex items-center gap-2 bg-[#00CE51] text-white px-3 py-2 rounded-lg text-sm font-medium"
         >
           <Download size={16} />
           Export CSV
