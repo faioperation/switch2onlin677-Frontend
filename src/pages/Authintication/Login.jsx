@@ -15,11 +15,12 @@ const Login = () => {
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
   const { login } = useAuth();
+  const [loading, setLoading] = useState(false)
 
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
-
+    setLoading(true);
     try {
 
       const res = await axios.post(
@@ -40,7 +41,7 @@ const Login = () => {
       toast.error("Something went wrong!");
 
     }
-
+    setLoading(false);
   };
 
   return (
@@ -126,9 +127,11 @@ const Login = () => {
           {/* Submit */}
           <button
             type="submit"
+            disabled={loading}
             className="btn-primary w-full"
           >
-            Continue
+            {/* Continue */}
+            {loading ? "Processing" : "Log In"}
           </button>
 
         </form>
