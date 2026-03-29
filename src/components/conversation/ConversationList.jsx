@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import ConversationItem from "./ConversationItem";
+import { useState } from "react";
 import { Search } from "lucide-react";
+import ConversationItem from "./ConversationItem";
 
 const ConversationList = ({
   conversations,
@@ -11,17 +11,19 @@ const ConversationList = ({
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
 
-  const filtered = conversations.filter((item) => {
+const filtered = conversations.filter((item) => {
 
-    const matchSearch = item.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
+  const name = item.name || ""; // 🔥 fallback
 
-    const matchFilter =
-      filter === "All" || item.platform === filter;
+  const matchSearch = name
+    .toLowerCase()
+    .includes(search.toLowerCase());
 
-    return matchSearch && matchFilter;
-  });
+  const matchFilter =
+    filter === "All" || item.platform === filter;
+
+  return matchSearch && matchFilter;
+});
 
   return (
     <div className="flex flex-col h-full">
@@ -70,8 +72,7 @@ const ConversationList = ({
 
       </div>
 
-      <div className="flex flex-col">
-
+      <div>
         {filtered.map((item) => (
           <ConversationItem
             key={item.id}
@@ -80,7 +81,6 @@ const ConversationList = ({
             onClick={() => setSelectedUser(item)}
           />
         ))}
-
       </div>
 
     </div>

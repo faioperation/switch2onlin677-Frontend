@@ -131,7 +131,7 @@ const Login = () => {
             className="btn-primary w-full"
           >
             {/* Continue */}
-            {loading ? "Processing" : "Log In"}
+            {loading ? "Processing..." : "Log In"}
           </button>
 
         </form>

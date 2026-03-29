@@ -5,7 +5,6 @@ const ChatHeader = ({ user, onBack }) => {
   return (
     <div className="flex items-center gap-3 p-4 border-b border-[#262626]">
 
-      {/* Back Button (mobile only) */}
       <button
         onClick={onBack}
         className="md:hidden text-gray-400"
@@ -23,7 +22,7 @@ const ChatHeader = ({ user, onBack }) => {
         </p>
 
         <p className="text-xs text-green-400">
-          Active
+          {user.platform}
         </p>
       </div>
 

@@ -1,38 +1,88 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../hooks/useAxios";
+
 import ConversationList from "../components/conversation/ConversationList";
 import ChatHeader from "../components/conversation/ChatHeader";
 import ChatMessages from "../components/conversation/ChatMessages";
-
-const fetchConversations = async () => {
-  const res = await fetch("/conversations.json");
-  return res.json();
-};
-
-const fetchMessages = async () => {
-  const res = await fetch("/messages.json");
-  return res.json();
-};
+import Loader from "../components/Loader";
 
 const Conversations = () => {
 
-  const { data: conversations = [] } = useQuery({
-    queryKey: ["conversations"],
-    queryFn: fetchConversations,
-  });
-
-  const { data: messages = [] } = useQuery({
-    queryKey: ["messages"],
-    queryFn: fetchMessages,
-  });
-
+  const axiosSecure = useAxiosSecure();
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const activeUser = selectedUser || conversations[0];
+  /* ======================
+      GET ALL SENDERS
+  ====================== */
 
-  const userMessages = messages.filter(
-    (msg) => msg.userId === activeUser?.id
-  );
+  const { data: conversations = [], isLoading } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/api/v1/conversation/senders/");
+
+      return res.data.map((item) => ({
+        id: item.id,
+        name: item.full_name || "User",
+        platform: item.platform,
+
+        // ✅ FIXED TIME (no seconds)
+        time: item.last_interaction
+          ? new Date(item.last_interaction).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })
+          : "",
+
+        initial: (item.full_name || "U").charAt(0).toUpperCase(),
+        lastMessage: "Click to view",
+      }));
+    }
+  });
+
+  /* ======================
+      GET MESSAGES
+  ====================== */
+
+  const { data: messages = [], isLoading: msgLoading } = useQuery({
+    queryKey: ["messages", selectedUser?.id],
+    enabled: !!selectedUser?.id,
+    queryFn: async () => {
+
+      const res = await axiosSecure.get(
+        `/api/v1/conversation/senders/${selectedUser.id}/messages/`
+      );
+
+      return res.data.map((msg) => ({
+
+        id: msg.id,
+        text: msg.text_content,
+        media: msg.media_url,
+        messageType: msg.message_type,
+
+        type: msg.is_from_customer ? "received" : "sent",
+
+        time: msg.timestamp
+          ? new Date(msg.timestamp).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+          : "",
+
+      }));
+    }
+  });
+
+  useEffect(() => {
+    if (conversations.length && !selectedUser) {
+      setSelectedUser(conversations[0]);
+    }
+  }, [conversations]);
+
+  if (isLoading) return <Loader />;
+
+  const activeUser = selectedUser;
 
   return (
 
@@ -40,18 +90,16 @@ const Conversations = () => {
 
       <div className="h-full bg-[#1A1A1A] border border-[#262626] rounded-xl overflow-hidden flex flex-col md:flex-row">
 
-        {/* Conversation List */}
+        {/* LEFT: Conversation List */}
         <div className="w-full md:w-[400px] md:border-r border-[#262626] md:h-full h-[30%] overflow-y-auto">
-
           <ConversationList
             conversations={conversations}
             selectedUser={activeUser}
             setSelectedUser={setSelectedUser}
           />
-
         </div>
 
-        {/* Chat Area */}
+        {/* RIGHT: Chat */}
         <div className="flex flex-col flex-1 md:h-full h-[70%] border-t border-[#00CE51] md:border-none">
 
           {activeUser && (
@@ -59,7 +107,11 @@ const Conversations = () => {
               <ChatHeader user={activeUser} />
 
               <div className="flex-1 overflow-y-auto">
-                <ChatMessages messages={userMessages} />
+                {msgLoading ? (
+                  <Loader />
+                ) : (
+                  <ChatMessages messages={messages} />
+                )}
               </div>
             </>
           )}
