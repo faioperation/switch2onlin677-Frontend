@@ -1,12 +1,12 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
-import logo from "../../assets/Vector.png";
+import logo from "../../assets/vector.png";
 import { useNavigate } from "react-router";
 
 const PasswordSuccessfull = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-        
+
 
 
   return (
@@ -33,7 +33,7 @@ const PasswordSuccessfull = () => {
         </p>
 
         {/* Button */}
-        <button onClick={()=>navigate('/')}  className="btn-primary">
+        <button onClick={() => navigate('/')} className="btn-primary">
           Continue
         </button>
 

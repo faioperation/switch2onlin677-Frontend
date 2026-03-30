@@ -1,14 +1,14 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import logo from "../../assets/Vector.png";
+import logo from "../../assets/vector.png";
 import { useMutation } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxios";
 import { toast } from "react-toastify";
 
 const ForgetPassword = () => {
 
-  const { register, handleSubmit, formState:{errors} } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
 
@@ -23,10 +23,10 @@ const ForgetPassword = () => {
 
       toast.success("OTP sent to your email");
       console.log(res);
-      
+
 
       navigate("/auth/otp", {
-        state:{ email: variables.email }
+        state: { email: variables.email }
       });
 
     },
@@ -49,7 +49,7 @@ const ForgetPassword = () => {
         <div className="flex flex-col items-center mb-8">
 
           <div className="flex items-center gap-2 mb-3">
-            <img src={logo} alt="logo" className="w-12 h-12"/>
+            <img src={logo} alt="logo" className="w-12 h-12" />
             <h1 className="text-3xl font-semibold">LoGo</h1>
           </div>
 
@@ -73,7 +73,7 @@ const ForgetPassword = () => {
 
             <input
               type="email"
-              {...register("email",{required:true})}
+              {...register("email", { required: true })}
               className="w-full mt-2 px-4 py-3 rounded-lg bg-white/5 border border-[#636363]"
             />
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, NavLink, useNavigate } from "react-router";
-import logo from '../assets/Vector.png'
+import logo from '../assets/vector.png'
 import {
   LayoutDashboard,
   MessageSquare,
@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 
 const Sidebar = ({ closeSidebar }) => {
 
-  const { logout , user } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -168,7 +168,7 @@ const Sidebar = ({ closeSidebar }) => {
             </Link>
 
           )}
-        </div>    
+        </div>
 
 
       </div>

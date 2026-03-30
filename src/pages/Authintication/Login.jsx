@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import logo from "../../assets/Vector.png";
+import logo from "../../assets/vector.png";
 import { useNavigate } from "react-router";
 import useAxiosSecure from "../../hooks/useAxios";
 import { useAuth } from "../Provider/AuthProvider";

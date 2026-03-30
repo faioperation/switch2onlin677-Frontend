@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router";
-import logo from "../../assets/Vector.png";
+import logo from "../../assets/vector.png";
 import useAxiosSecure from "../../hooks/useAxios";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -190,7 +190,7 @@ const Otp = () => {
         <div className="flex flex-col items-center mb-8">
 
           <div className="flex items-center gap-2 mb-3">
-            <img src={logo} alt="logo" className="w-12 h-12"/>
+            <img src={logo} alt="logo" className="w-12 h-12" />
             <h1 className="text-3xl font-semibold">LoGo</h1>
           </div>
 
