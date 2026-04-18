@@ -35,7 +35,7 @@ const Sidebar = ({ closeSidebar }) => {
 
 
   return (
-    <div className="flex flex-col h-full bg-[#0B0B0B] border-r border-[#1F1F1F] max-w-full w-[280px]">
+    <div className="flex flex-col h-full bg-[#0B0B0B] border-r border-[#1F1F1F] w-full overflow-y-auto overflow-x-hidden">
 
       {/* Logo */}
       <Link to={'/'} className="flex flex-col items-center py-5">
