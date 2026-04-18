@@ -23,10 +23,10 @@ const Root = () => {
 
   return (
 
-    <div className="flex min-h-screen bg-[#0B0B0B] text-white">
+    <div className="flex min-h-screen bg-[#0B0B0B] text-white relative">
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[260px] border-r border-[#2A2A2A]">
+      <aside className="hidden md:flex w-[260px] border-r border-[#2A2A2A] h-screen sticky top-0">
         <Sidebar />
       </aside>
 
@@ -55,7 +55,7 @@ const Root = () => {
 
         <Navbar setSidebarOpen={setSidebarOpen} />
 
-        <main className="flex-1 p-6 bg-[#0B0B0B] overflow-auto">
+        <main className="flex-1 p-6 bg-[#0B0B0B] min-h-[calc(100vh-80px)]">
           <Outlet />
         </main>
 

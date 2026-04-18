@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   });
 
   const avatar = profile?.profile_image
-    ? `https://test11.fireai.agency${profile.profile_image}`
+    ? `https://test22.fireai.agency${profile.profile_image}`
     : "https://i.ibb.co/2kRZ0y9/user.png";
 
   // login
