@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
-import logo from "../../assets/vector.png";
+import logo from "../../assets/Vector.png";
 import { useNavigate } from "react-router";
 
 const PasswordSuccessfull = () => {

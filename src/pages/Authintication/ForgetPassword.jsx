@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import logo from "../../assets/vector.png";
+import logo from "../../assets/Vector.png";
 import { useMutation } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxios";
 import { toast } from "react-toastify";
