@@ -42,7 +42,7 @@ const SetPassword = () => {
         confirm_password: data.confirmPassword
       });
 
-      console.log(res.data);
+      // console.log(res.data);
 
       toast.success("Password Reset Successful");
 
@@ -50,7 +50,7 @@ const SetPassword = () => {
 
     } catch (error) {
 
-      console.log(error.response?.data);
+      // console.log(error.response?.data);
       toast.error("Failed to reset password");
 
     }

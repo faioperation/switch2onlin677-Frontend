@@ -16,7 +16,7 @@ const AgentManage = () => {
       try {
 
         const res = await axiosSecure.get("/api/v1/agent-behavior/");
-        console.log("GET agent-behavior:", res.data);
+        // console.log("GET agent-behavior:", res.data);
 
         return res.data;
 

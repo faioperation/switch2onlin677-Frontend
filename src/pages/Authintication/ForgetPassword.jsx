@@ -22,7 +22,7 @@ const ForgetPassword = () => {
     onSuccess: (res, variables) => {
 
       toast.success("OTP sent to your email");
-      console.log(res);
+      // console.log(res);
 
 
       navigate("/auth/otp", {

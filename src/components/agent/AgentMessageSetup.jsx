@@ -51,7 +51,7 @@ const AgentMessageSetup = ({ data }) => {
           payload
         );
 
-        console.log("PATCH agent-behavior:", res.data);
+        // console.log("PATCH agent-behavior:", res.data);
 
         toast.success("Message has been changed ✅");
 
@@ -62,7 +62,7 @@ const AgentMessageSetup = ({ data }) => {
           payload
         );
 
-        console.log("POST agent-behavior:", res.data);
+        // console.log("POST agent-behavior:", res.data);
 
         toast.success("Message saved successfully 🎉");
 
@@ -72,7 +72,7 @@ const AgentMessageSetup = ({ data }) => {
 
     } catch (error) {
 
-      console.log("Submit error:", error.response?.data);
+      // console.log("Submit error:", error.response?.data);
       toast.error("Failed to save message ❌");
 
     }

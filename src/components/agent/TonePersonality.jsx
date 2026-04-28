@@ -42,7 +42,7 @@ const TonePersonality = ({ data }) => {
           payload
         );
 
-        console.log("PATCH tone:", res.data);
+        // console.log("PATCH tone:", res.data);
 
       } else {
 
@@ -51,7 +51,7 @@ const TonePersonality = ({ data }) => {
           payload
         );
 
-        console.log("POST tone:", res.data);
+        // console.log("POST tone:", res.data);
 
       }
 

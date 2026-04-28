@@ -51,7 +51,7 @@ const AdminManage = () => {
 
           const res = await axiosSecure.delete(`/auth/users/${id}/`);
 
-          console.log(res.data);
+          // console.log(res.data);
 
           refetch();
 
@@ -63,7 +63,7 @@ const AdminManage = () => {
 
         } catch (error) {
 
-          console.log(error);
+          // console.log(error);
 
           Swal.fire({
             title: "Error!",

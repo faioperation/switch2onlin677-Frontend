@@ -17,7 +17,7 @@ const AdminModal = ({ close, refetch }) => {
 
       const res = await axiosSecure.post("/auth/users/", data);
 
-      console.log(res.data);
+      // console.log(res.data);
 
       refetch();
 
@@ -25,7 +25,7 @@ const AdminModal = ({ close, refetch }) => {
 
     } catch (error) {
 
-      console.log(error);
+      // console.log(error);
 
     }
 

@@ -28,7 +28,7 @@ const ChangePasswordModal = ({ close }) => {
         confirm_password: data.confirmPassword
       });
 
-      console.log(res.data);
+      // console.log(res.data);
 
       Swal.fire({
         icon: "success",
@@ -40,7 +40,7 @@ const ChangePasswordModal = ({ close }) => {
 
     } catch (error) {
 
-      console.log(error.response?.data);
+      // console.log(error.response?.data);
 
       Swal.fire({
         icon: "error",
