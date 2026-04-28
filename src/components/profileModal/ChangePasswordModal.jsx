@@ -22,13 +22,13 @@ const ChangePasswordModal = ({ close }) => {
 
     try {
 
-      const res = await axiosSecure.post("/auth/change-password/", {
+      await axiosSecure.post("/auth/change-password/", {
         old_password: data.oldPassword,
         new_password: data.newPassword,
         confirm_password: data.confirmPassword
       });
 
-      // console.log(res.data);
+      // console.log("Password changed");
 
       Swal.fire({
         icon: "success",
@@ -38,9 +38,9 @@ const ChangePasswordModal = ({ close }) => {
 
       close();
 
-    } catch (error) {
+    } catch {
 
-      // console.log(error.response?.data);
+      // console.log(err.response?.data);
 
       Swal.fire({
         icon: "error",

@@ -50,9 +50,9 @@ const EditProfileModal = ({ close, profile, avatar }) => {
 
       close();
 
-    } catch (error) {
+    } catch {
 
-      // console.log(error.response?.data);
+      // console.log(err.response?.data);
       toast.error("Failed to update profile ❌");
 
     }

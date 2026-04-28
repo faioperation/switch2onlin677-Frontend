@@ -20,11 +20,10 @@ const SetPassword = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    getValues,
     formState: { errors }
   } = useForm();
 
-  const newPassword = watch("newPassword");
 
   const onSubmit = async (data) => {
 
@@ -36,21 +35,21 @@ const SetPassword = () => {
 
     try {
 
-      const res = await axiosSecure.post("/auth/reset-password/", {
+      await axiosSecure.post("/auth/reset-password/", {
         email: email,
         new_password: data.newPassword,
         confirm_password: data.confirmPassword
       });
 
-      // console.log(res.data);
+      // console.log("Password Reset Successful");
 
       toast.success("Password Reset Successful");
 
       navigate("/auth/password-successfull");
 
-    } catch (error) {
+    } catch {
 
-      // console.log(error.response?.data);
+      // console.log(err.response?.data);
       toast.error("Failed to reset password");
 
     }
@@ -139,7 +138,7 @@ const SetPassword = () => {
                 {...register("confirmPassword", {
                   required: "Please confirm your password",
                   validate: (value) =>
-                    value === newPassword || "Passwords do not match"
+                    value === getValues("newPassword") || "Passwords do not match"
                 })}
                 className="w-full px-4 py-3 rounded-lg bg-white/5 border border-[#636363] outline-none focus:border-[#00CE51] pr-10"
               />

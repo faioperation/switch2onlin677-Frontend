@@ -26,13 +26,13 @@ const Root = () => {
     <div className="flex min-h-screen bg-[#0B0B0B] text-white relative">
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-[260px] border-r border-[#2A2A2A] h-screen sticky top-0">
+      <aside className="hidden lg:flex w-[260px] border-r border-[#2A2A2A] h-screen sticky top-0">
         <Sidebar />
       </aside>
 
       {/* Mobile Sidebar */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
 
           {/* Overlay */}
           <div

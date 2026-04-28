@@ -7,7 +7,7 @@ const ChatHeader = ({ user, onBack }) => {
 
       <button
         onClick={onBack}
-        className="md:hidden text-gray-400"
+        className="md:hidden text-gray-400 hover:text-white transition-colors"
       >
         <ArrowLeft size={18} />
       </button>

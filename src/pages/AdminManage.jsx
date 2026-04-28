@@ -49,9 +49,9 @@ const AdminManage = () => {
 
         try {
 
-          const res = await axiosSecure.delete(`/auth/users/${id}/`);
+          await axiosSecure.delete(`/auth/users/${id}/`);
 
-          // console.log(res.data);
+          // console.log("Deleted admin");
 
           refetch();
 
@@ -61,9 +61,9 @@ const AdminManage = () => {
             icon: "success"
           });
 
-        } catch (error) {
+        } catch {
 
-          // console.log(error);
+          // console.log(err);
 
           Swal.fire({
             title: "Error!",

@@ -32,7 +32,7 @@ const Navbar = ({ setSidebarOpen }) => {
         {/* Mobile Sidebar Toggle */}
         <button
           onClick={() => setSidebarOpen(true)}
-          className="md:hidden text-gray-400 hover:text-white transition"
+          className="lg:hidden text-gray-400 hover:text-white transition"
         >
           <Menu size={22} />
         </button>

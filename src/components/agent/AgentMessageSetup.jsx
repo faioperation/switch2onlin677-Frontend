@@ -46,7 +46,7 @@ const AgentMessageSetup = ({ data }) => {
 
       if (data?.id) {
 
-        const res = await axiosSecure.patch(
+        await axiosSecure.patch(
           "/api/v1/agent-behavior/",
           payload
         );
@@ -57,7 +57,7 @@ const AgentMessageSetup = ({ data }) => {
 
       } else {
 
-        const res = await axiosSecure.post(
+        await axiosSecure.post(
           "/api/v1/agent-behavior/",
           payload
         );
@@ -70,9 +70,9 @@ const AgentMessageSetup = ({ data }) => {
 
       queryClient.invalidateQueries(["agent-behavior"]);
 
-    } catch (error) {
+    } catch {
 
-      // console.log("Submit error:", error.response?.data);
+      // console.log("Submit error:", err.response?.data);
       toast.error("Failed to save message ❌");
 
     }

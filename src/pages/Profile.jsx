@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 
 import EditProfileModal from "../components/profileModal/EditProfileModal";
 import ChangePasswordModal from "../components/profileModal/ChangePasswordModal";
 import ProfileCard from "../components/profileModal/ProfileCard";
-import useAxiosSecure from "../hooks/useAxios";
 import Loader from "../components/Loader";
 import { useAuth } from "./Provider/AuthProvider";
 

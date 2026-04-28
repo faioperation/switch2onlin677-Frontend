@@ -7,15 +7,14 @@ const AdminModal = ({ close, refetch }) => {
 
   const {
     register,
-    handleSubmit,
-    formState: { errors }
+    handleSubmit
   } = useForm();
 
   const onSubmit = async (data) => {
 
     try {
 
-      const res = await axiosSecure.post("/auth/users/", data);
+      await axiosSecure.post("/auth/users/", data);
 
       // console.log(res.data);
 
@@ -23,9 +22,9 @@ const AdminModal = ({ close, refetch }) => {
 
       close();
 
-    } catch (error) {
+    } catch {
 
-      // console.log(error);
+      // console.log(err);
 
     }
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/Vector.png";
 import { useNavigate } from "react-router";
-import useAxiosSecure from "../../hooks/useAxios";
 import { useAuth } from "../Provider/AuthProvider";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -13,7 +12,6 @@ const Login = () => {
 
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
-  const axiosSecure = useAxiosSecure();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false)
 
@@ -24,7 +22,7 @@ const Login = () => {
     try {
 
       const res = await axios.post(
-        "https://test11.fireai.agency/auth/login/",
+        `${import.meta.env.VITE_API_URL}/auth/login/`,
         data
       );
 
@@ -35,9 +33,9 @@ const Login = () => {
       navigate("/");
       toast.success("Login Successful!");
 
-    } catch (error) {
+    } catch {
 
-      // console.log(error.response?.data);
+      // console.log(err.response?.data);
       toast.error("Something went wrong!");
 
     }

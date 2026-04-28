@@ -11,6 +11,7 @@ const Conversations = () => {
 
   const axiosSecure = useAxiosSecure();
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showMobileChat, setShowMobileChat] = useState(false);
 
   /* ======================
       GET ALL SENDERS
@@ -20,30 +21,63 @@ const Conversations = () => {
     queryKey: ["conversations"],
     queryFn: async () => {
       const res = await axiosSecure.get("/api/v1/conversation/senders/");
+      const sendersList = res.data;
 
-      return res.data.map((item) => ({
-        id: item.id,
-        name: item.full_name || "User",
-        platform: item.platform,
+      const sendersWithLastMessage = await Promise.all(
+        sendersList.map(async (item) => {
+          let lastMessageText = "No messages yet";
 
-        // ✅ FIXED TIME (no seconds)
-        time: item.last_interaction
-          ? new Date(item.last_interaction).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          })
-          : "",
+          try {
+            const msgRes = await axiosSecure.get(
+              `/api/v1/conversation/senders/${item.id}/messages/`
+            );
+            const msgs = msgRes.data;
 
-        initial: (item.full_name || "U").charAt(0).toUpperCase(),
-        lastMessage: "Click to view",
-      }));
+            if (msgs && msgs.length > 0) {
+              // Get the last message in the array
+              const lastMsg = msgs[msgs.length - 1];
+              
+              if (lastMsg.message_type === "image") {
+                lastMessageText = "📷 Image";
+              } else if (lastMsg.message_type === "video") {
+                lastMessageText = "🎥 Video";
+              } else if (lastMsg.message_type === "file" || lastMsg.message_type === "pdf") {
+                lastMessageText = "📄 Document";
+              } else {
+                lastMessageText = lastMsg.text_content || "Unsupported message";
+              }
+            }
+          } catch {
+            // fallback
+          }
+
+          return {
+            id: item.id,
+            name: item.full_name || "User",
+            platform: item.platform,
+
+            // ✅ FIXED TIME (no seconds)
+            time: item.last_interaction
+              ? new Date(item.last_interaction).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+              : "",
+
+            initial: (item.full_name || "U").charAt(0).toUpperCase(),
+            lastMessage: lastMessageText,
+          };
+        })
+      );
+
+      return sendersWithLastMessage;
     }
   });
 
-  /* ======================
-      GET MESSAGES
-  ====================== */
+
+      // GET MESSAGES
+
 
   const { data: messages = [], isLoading: msgLoading } = useQuery({
     queryKey: ["messages", selectedUser?.id],
@@ -78,7 +112,7 @@ const Conversations = () => {
     if (conversations.length && !selectedUser) {
       setSelectedUser(conversations[0]);
     }
-  }, [conversations]);
+  }, [conversations, selectedUser]);
 
   if (isLoading) return <Loader />;
 
@@ -86,25 +120,28 @@ const Conversations = () => {
 
   return (
 
-    <div className="h-[calc(100vh-70px)]">
+    <div className="h-[calc(100dvh-80px)] md:h-[calc(100vh-100px)] -m-6 md:m-0">
 
-      <div className="h-full bg-[#1A1A1A] border border-[#262626] rounded-xl overflow-hidden flex flex-col md:flex-row">
+      <div className="h-full bg-[#1A1A1A] md:border border-[#262626] md:rounded-xl overflow-hidden flex flex-col md:flex-row">
 
         {/* LEFT: Conversation List */}
-        <div className="w-full md:w-[400px] md:border-r border-[#262626] md:h-full h-[30%] overflow-y-auto">
+        <div className={`w-full md:w-[350px] lg:w-[400px] md:border-r border-[#262626] md:h-full overflow-y-auto ${showMobileChat ? "hidden md:block" : "h-full"}`}>
           <ConversationList
             conversations={conversations}
             selectedUser={activeUser}
-            setSelectedUser={setSelectedUser}
+            setSelectedUser={(user) => {
+              setSelectedUser(user);
+              setShowMobileChat(true);
+            }}
           />
         </div>
 
         {/* RIGHT: Chat */}
-        <div className="flex flex-col flex-1 md:h-full h-[70%] border-t border-[#00CE51] md:border-none">
+        <div className={`flex-col flex-1 md:h-full border-t border-[#00CE51] md:border-none ${showMobileChat ? "flex h-full" : "hidden md:flex h-full"}`}>
 
           {activeUser && (
             <>
-              <ChatHeader user={activeUser} />
+              <ChatHeader user={activeUser} onBack={() => setShowMobileChat(false)} />
 
               <div className="flex-1 overflow-y-auto">
                 {msgLoading ? (

@@ -37,7 +37,7 @@ const TonePersonality = ({ data }) => {
 
       if (data?.id) {
 
-        const res = await axiosSecure.patch(
+        await axiosSecure.patch(
           "/api/v1/agent-behavior/",
           payload
         );
@@ -46,7 +46,7 @@ const TonePersonality = ({ data }) => {
 
       } else {
 
-        const res = await axiosSecure.post(
+        await axiosSecure.post(
           "/api/v1/agent-behavior/",
           payload
         );

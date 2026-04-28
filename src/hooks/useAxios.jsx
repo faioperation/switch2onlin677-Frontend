@@ -42,7 +42,7 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 
 const axiosSecure = axios.create({
-  baseURL: "https://test11.fireai.agency",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 const useAxiosSecure = () => {

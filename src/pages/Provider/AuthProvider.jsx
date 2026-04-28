@@ -25,9 +25,9 @@ export const AuthProvider = ({ children }) => {
     refetchOnWindowFocus: false,
     retry: 1
   });
- 
+
   const avatar = profile?.profile_image
-    ? `https://test11.fireai.agency${profile.profile_image}`
+    ? `${import.meta.env.VITE_API_URL}${profile.profile_image}`
     : "https://i.ibb.co/2kRZ0y9/user.png";
 
   // login
