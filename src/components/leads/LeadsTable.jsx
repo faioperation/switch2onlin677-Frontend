@@ -1,77 +1,105 @@
 import { Trash2, MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router";
 
-const LeadsTable = ({ data }) => {
+const platformStyles = {
+  instagram: "bg-pink-500/10 text-pink-400 border border-pink-500/20",
+  facebook:  "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+  whatsapp:  "bg-green-500/10 text-green-400 border border-green-500/20",
+};
 
-  const platformColor = {
-    instagram: "bg-pink-500/20 text-pink-400",
-    facebook: "bg-blue-500/20 text-blue-400",
-    whatsapp: "bg-green-500/20 text-green-400",
-  };
+const formatDate = (iso) => {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+const LeadsTable = ({ data, onDelete }) => {
+  const navigate = useNavigate();
+  if (!data.length) {
+    return (
+      <div className="text-center py-16 text-gray-500 text-sm">
+        No leads found.
+      </div>
+    );
+  }
 
   return (
-    <div className="overflow-x-auto">
+    /* Horizontal scroll on mobile */
+    <div className="overflow-x-auto scrollbar-hide -mx-2 sm:mx-0">
 
-      <table className="w-full text-sm">
+      {/* Swipe hint — mobile only */}
+      <p className="sm:hidden text-xs text-gray-600 px-2 mb-2">← Swipe to see more →</p>
 
-        <thead className="bg-[#253029] text-[#BFBFBF]">
-          <tr>
-            <th className="py-3 px-4 text-left">#</th>
-            <th className="text-left">Name</th>
-            <th className="text-left">Interested Product</th>
-            <th className="text-left">Date</th>
-            <th className="text-left">Platform</th>
-            <th className="text-center">Action</th>
+      <table className="min-w-[640px] w-full text-sm">
+
+        <thead>
+          <tr className="bg-[#253029] text-gray-400 text-xs uppercase tracking-wider">
+            <th className="py-3 px-4 text-left rounded-tl-lg">#</th>
+            <th className="py-3 px-4 text-left">Name</th>
+            <th className="py-3 px-4 text-left">Interested Product</th>
+            <th className="py-3 px-4 text-left">Date</th>
+            <th className="py-3 px-4 text-left">Platform</th>
+            <th className="py-3 px-4 text-center rounded-tr-lg">Action</th>
           </tr>
         </thead>
 
-        <tbody className="text-[#BFBFBF]">
-
+        <tbody>
           {data.map((lead, index) => (
-
             <tr
               key={lead.id}
-              className="border-b border-[#262626] hover:bg-[#202020]"
+              className="border-b border-[#1f1f1f] hover:bg-[#1f1f1f] transition-colors"
             >
 
-              <td className="py-4 px-4">
+              <td className="py-4 px-4 text-gray-500 font-mono text-xs">
                 {String(index + 1).padStart(2, "0")}
               </td>
 
-              <td>{lead.name}</td>
+              <td className="py-4 px-4 text-white font-medium whitespace-nowrap">
+                {lead.name}
+              </td>
 
-              <td>{lead.product}</td>
+              <td className="py-4 px-4 text-gray-400 max-w-[200px] truncate" title={lead.interested_product}>
+                {lead.interested_product || "—"}
+              </td>
 
-              <td>{lead.date}</td>
+              <td className="py-4 px-4 text-gray-400 whitespace-nowrap">
+                {formatDate(lead.date)}
+              </td>
 
-              <td>
-                <span
-                  className={`px-2 py-1 rounded text-xs capitalize ${platformColor[lead.platform.toLowerCase()]}`}
-                >
+              <td className="py-4 px-4">
+                <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize whitespace-nowrap ${
+                  platformStyles[lead.platform?.toLowerCase()] || "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                }`}>
                   {lead.platform}
                 </span>
               </td>
 
-              <td className="flex items-center justify-center gap-3 pt-3">
-
-                <MessageSquare
-                  size={18}
-                  className="text-gray-400 cursor-pointer hover:text-white"
-                />
-
-                <Trash2
-                  size={18}
-                  className="text-red-400 cursor-pointer hover:text-red-500"
-                />
-
+              <td className="py-4 px-4">
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    title="View conversation"
+                    onClick={() => navigate(`/conversation?sender_id=${lead.sender_id}`)}
+                    className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-[#2a2a2a] transition-colors"
+                  >
+                    <MessageSquare size={16} />
+                  </button>
+                  <button
+                    title="Delete lead"
+                    onClick={() => onDelete(lead.id)}
+                    className="p-1.5 rounded-md text-red-500/70 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </td>
 
             </tr>
           ))}
-
         </tbody>
 
       </table>
-
     </div>
   );
 };

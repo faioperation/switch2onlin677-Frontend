@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router";
 import useAxiosSecure from "../hooks/useAxios";
 
 import ConversationList from "../components/conversation/ConversationList";
@@ -13,30 +14,39 @@ const Conversations = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showMobileChat, setShowMobileChat] = useState(false);
 
+  // Read ?sender_id= from URL (set when navigating from Leads page)
+  const [searchParams] = useSearchParams();
+  const targetSenderId = searchParams.get("sender_id");
+
   /* ======================
       GET ALL SENDERS
   ====================== */
 
   const { data: conversations = [], isLoading } = useQuery({
     queryKey: ["conversations"],
+    retry: false, // don't retry — a failure should show the page, not hang it
     queryFn: async () => {
       const res = await axiosSecure.get("/api/v1/conversation/senders/");
-      const sendersList = res.data;
+      // API returns a paginated response: { count, next, results: [...] }
+      const sendersList = res.data.results || [];
 
       const sendersWithLastMessage = await Promise.all(
         sendersList.map(async (item) => {
           let lastMessageText = "No messages yet";
 
           try {
-            const msgRes = await axiosSecure.get(
+            // Timeout after 5s so one slow sender doesn't block the list
+            const timeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error("timeout")), 5000)
+            );
+            const fetchPromise = axiosSecure.get(
               `/api/v1/conversation/senders/${item.id}/messages/`
             );
+            const msgRes = await Promise.race([fetchPromise, timeoutPromise]);
             const msgs = msgRes.data;
 
             if (msgs && msgs.length > 0) {
-              // Get the last message in the array
               const lastMsg = msgs[msgs.length - 1];
-              
               if (lastMsg.message_type === "image") {
                 lastMessageText = "📷 Image";
               } else if (lastMsg.message_type === "video") {
@@ -48,15 +58,14 @@ const Conversations = () => {
               }
             }
           } catch {
-            // fallback
+            // fallback — don't block the list
           }
 
           return {
             id: item.id,
+            sender_id: item.sender_id, // keep original sender_id for matching from Leads
             name: item.full_name || "User",
             platform: item.platform,
-
-            // ✅ FIXED TIME (no seconds)
             time: item.last_interaction
               ? new Date(item.last_interaction).toLocaleTimeString([], {
                 hour: "2-digit",
@@ -64,7 +73,6 @@ const Conversations = () => {
                 hour12: true,
               })
               : "",
-
             initial: (item.full_name || "U").charAt(0).toUpperCase(),
             lastMessage: lastMessageText,
           };
@@ -108,11 +116,26 @@ const Conversations = () => {
     }
   });
 
+  // Auto-select conversation:
+  // If ?sender_id= in URL → match by sender_id (coming from Leads page)
+  // Otherwise → default to the first conversation
   useEffect(() => {
-    if (conversations.length && !selectedUser) {
+    if (!conversations.length) return;
+
+    if (targetSenderId) {
+      const match = conversations.find((c) => c.sender_id === targetSenderId);
+      if (match) {
+        setSelectedUser(match);
+        setShowMobileChat(true);
+        return;
+      }
+    }
+
+    // Default: select first conversation
+    if (!selectedUser) {
       setSelectedUser(conversations[0]);
     }
-  }, [conversations, selectedUser]);
+  }, [conversations, targetSenderId]);
 
   if (isLoading) return <Loader />;
 

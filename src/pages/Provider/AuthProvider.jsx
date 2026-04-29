@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   const token = localStorage.getItem("accessToken");
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["profile"],
     enabled: !!token,
     queryFn: async () => {
@@ -20,10 +20,9 @@ export const AuthProvider = ({ children }) => {
       return res.data;
     },
 
-    // ⚡ performance improve
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    staleTime: 1000 * 60 * 5, // 5 min cache
     refetchOnWindowFocus: false,
-    retry: 1
+    retry: false, // don't retry — a failure shouldn't hang the app
   });
 
   const avatar = profile?.profile_image
@@ -67,7 +66,8 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    loading: loading || isLoading,
+    loading,            // only local state — resolves in milliseconds
+    profileLoading,     // separate, pages can use this if they need it
     profile,
     avatar
   };
