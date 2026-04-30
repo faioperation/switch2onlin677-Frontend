@@ -15,7 +15,7 @@ const formatDate = (iso) => {
   });
 };
 
-const LeadsTable = ({ data, onDelete }) => {
+const LeadsTable = ({ data, onDelete, page = 1, limit = 10 }) => {
   const navigate = useNavigate();
   if (!data.length) {
     return (
@@ -46,15 +46,19 @@ const LeadsTable = ({ data, onDelete }) => {
         </thead>
 
         <tbody>
-          {data.map((lead, index) => (
-            <tr
-              key={lead.id}
-              className="border-b border-[#1f1f1f] hover:bg-[#1f1f1f] transition-colors"
-            >
+          {data.map((lead, index) => {
+            // Calculate continuous serial number: (page-1)*limit + index + 1
+            const serialNumber = (Number(page) - 1) * Number(limit) + index + 1;
+            
+            return (
+              <tr
+                key={lead.id}
+                className="border-b border-[#1f1f1f] hover:bg-[#1f1f1f] transition-colors"
+              >
 
-              <td className="py-4 px-4 text-gray-500 font-mono text-xs">
-                {String(index + 1).padStart(2, "0")}
-              </td>
+                <td className="py-4 px-4 text-gray-500 font-mono text-xs">
+                  {String(serialNumber).padStart(2, "0")}
+                </td>
 
               <td className="py-4 px-4 text-white font-medium whitespace-nowrap">
                 {lead.name}
@@ -95,8 +99,9 @@ const LeadsTable = ({ data, onDelete }) => {
                 </div>
               </td>
 
-            </tr>
-          ))}
+              </tr>
+            );
+          })}
         </tbody>
 
       </table>

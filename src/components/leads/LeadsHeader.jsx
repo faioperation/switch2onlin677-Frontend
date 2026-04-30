@@ -1,6 +1,12 @@
 import { Search, Download } from "lucide-react";
 
-const LeadsHeader = ({ search, setSearch, platform, setPlatform, onExport }) => {
+const LeadsHeader = ({ search, setSearch, platform, setPlatform, onExport, onSearchTrigger }) => {
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      onSearchTrigger?.();
+    }
+  };
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
 
@@ -13,6 +19,7 @@ const LeadsHeader = ({ search, setSearch, platform, setPlatform, onExport }) => 
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Search by name..."
           className="w-full sm:w-80 bg-[#111] border border-[#2A2A2A] rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#00CE51] transition-colors"
         />

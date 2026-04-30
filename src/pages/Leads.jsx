@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import LeadsHeader from "../components/leads/LeadsHeader";
 import LeadsTable from "../components/leads/LeadsTable";
 import LeadsPagination from "../components/leads/LeadsPagination";
@@ -22,7 +22,7 @@ const Leads = () => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(1); // reset to page 1 on new search
-    }, 200);
+    }, 1000);
     return () => clearTimeout(timer);
   }, [search]);
 
@@ -53,6 +53,7 @@ const Leads = () => {
       const res = await axiosSecure.get("/api/v1/leads", { params });
       return res.data;
     },
+    placeholderData: keepPreviousData,
   });
 
   const leads = data?.results || [];
@@ -141,7 +142,8 @@ const Leads = () => {
      🖼️ Loading / Error States
   =========================== */
 
-  if (isLoading) {
+  // Only show the full-page loader on the VERY first load (when no data exists)
+  if (isLoading && !data) {
     return (
       <div className="bg-[#1A1A1A] border border-[#262626] rounded-xl p-10 text-center text-gray-400">
         Loading leads...
@@ -157,8 +159,13 @@ const Leads = () => {
     );
   }
 
+  const triggerSearch = () => {
+    setDebouncedSearch(search);
+    setPage(1);
+  };
+
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 transition-opacity duration-200 ${data && isLoading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
       <div className="bg-[#1A1A1A] border border-[#262626] rounded-xl p-6">
 
         {/* Header — search & filter passed to backend */}
@@ -168,10 +175,11 @@ const Leads = () => {
           platform={platform}
           setPlatform={handlePlatformChange}
           onExport={exportCSV}
+          onSearchTrigger={triggerSearch}
         />
 
         {/* Table */}
-        <LeadsTable data={leads} onDelete={handleDelete} />
+        <LeadsTable data={leads} onDelete={handleDelete} page={page} limit={limit} />
 
         {/* Pagination — driven by backend count */}
         <LeadsPagination
