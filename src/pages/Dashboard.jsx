@@ -4,10 +4,38 @@ import ConversationChart from "../components/dashboard/ConversationChart";
 import PlatformChart from "../components/dashboard/PlatformChart";
 import RecentConversation from "../components/dashboard/RecentConversation";
 import TrendingProducts from "../components/dashboard/TrendingProducts";
+import useAxiosSecure from "../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
 
-import { MessageSquare, MessageCircle, Users, UserPlus } from "lucide-react";
+import { MessageSquare, MessageCircle, Users, UserPlus, Loader2 } from "lucide-react";
 
 const Dashboard = () => {
+  const axiosSecure = useAxiosSecure();
+
+  const { data: stats, isLoading, isError } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/api/v1/dashboard/stats/");
+      return res.data;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="animate-spin text-[#00CE51]" size={40} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center text-red-500 font-medium">
+        Failed to load dashboard data. Please try again.
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
 
@@ -16,32 +44,32 @@ const Dashboard = () => {
 
         <StatsCard
           title="Total Conversations"
-          value="1504"
-          change="20.2%"
+          value={stats?.total_conversations || 0}
+          change="Updated"
           positive
           icon={<MessageSquare size={18} className="text-purple-400" />}
         />
 
         <StatsCard
-          title="Active Chat"
-          value="547"
-          change="30.5%"
+          title="Today's Conversations"
+          value={stats?.today_conversations || 0}
+          change="Real-time"
           positive
           icon={<MessageCircle size={18} className="text-yellow-400" />}
         />
 
         <StatsCard
           title="Total Leads"
-          value="354"
-          change="5.2%"
-          positive={false}
+          value={stats?.total_leads || 0}
+          change="Overall"
+          positive
           icon={<Users size={18} className="text-blue-400" />}
         />
 
         <StatsCard
-          title="Potential Leads"
-          value="571"
-          change="2.2%"
+          title="Today's Leads"
+          value={stats?.today_leads || 0}
+          change="New"
           positive
           icon={<UserPlus size={18} className="text-green-400" />}
         />
@@ -52,10 +80,10 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <div className="lg:col-span-2">
-          <ConversationChart />
+          <ConversationChart chartData={stats?.conversations_last_7_days} />
         </div>
 
-        <PlatformChart />
+        <PlatformChart distributionData={stats?.platform_distribution} />
 
       </div>
 
@@ -72,4 +100,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard;
