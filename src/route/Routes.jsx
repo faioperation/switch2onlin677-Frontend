@@ -24,10 +24,10 @@ export const router = createBrowserRouter([
                 index: true,
                 element: <Dashboard></Dashboard>
             },
-            {
-                path: "agent-Manage",
-                element: <AgentManage></AgentManage>
-            },
+            // {
+            //     path: "agent-Manage",
+            //     element: <AgentManage></AgentManage>
+            // },
             {
                 path: "conversation",
                 element: <Conversations></Conversations>

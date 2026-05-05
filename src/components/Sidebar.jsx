@@ -95,7 +95,7 @@ const Sidebar = ({ closeSidebar }) => {
         </NavLink>
 
 
-        <NavLink to="/agent-manage" className={linkClass} onClick={closeSidebar}>
+        {/* <NavLink to="/agent-manage" className={linkClass} onClick={closeSidebar}>
           {({ isActive }) => (
             <>
               {isActive && (
@@ -105,7 +105,7 @@ const Sidebar = ({ closeSidebar }) => {
               Agent Manage
             </>
           )}
-        </NavLink>
+        </NavLink> */}
 
 
         <NavLink to="/admin-manage" className={linkClass} onClick={closeSidebar}>

@@ -61,7 +61,7 @@ const RecentConversation = () => {
           {/* Table Header */}
           <thead className="bg-[#253029] text-gray-300">
             <tr>
-              <th className="text-left py-3 px-3">#</th>
+              <th className="text-left py-3 px-3">SL</th>
               <th className="text-left px-3">Name</th>
               <th className="text-left px-3">Last Active</th>
               <th className="text-left px-3">Platform</th>
@@ -133,4 +133,4 @@ const RecentConversation = () => {
 };
 
 export default RecentConversation;
-
+

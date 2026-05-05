@@ -18,12 +18,17 @@ const ConversationChart = ({ chartData }) => {
     
     // Custom order to ensure days follow a logical sequence if needed, 
     // or just use keys from API. Let's follow a standard week starting Mon.
-    const order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    // const order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     
-    return order.map(day => ({
-      day,
-      value: chartData[day] || 0
-    }));
+  //   return order.map(day => ({
+  //     day,
+  //     value: chartData[day] || 0
+  //   }));
+  // }, [chartData]);
+
+  return chartData
+    ? Object.entries(chartData).map(([day, value]) => ({ day, value }))
+    : [];
   }, [chartData]);
 
   const maxValue = useMemo(() => {
@@ -31,6 +36,8 @@ const ConversationChart = ({ chartData }) => {
     const max = Math.max(...data.map(d => d.value));
     return max > 0 ? Math.ceil(max / 10) * 10 + 10 : 100; // Dynamic scale with some padding
   }, [data]);
+
+  // console.log("Chart Data:", data);
 
   return (
     <div className="bg-[#1A1A1A] rounded-xl p-3 md:p-6 border border-[#262626] w-full">
@@ -85,4 +92,4 @@ const ConversationChart = ({ chartData }) => {
   );
 };
 
-export default ConversationChart;
+export default ConversationChart;

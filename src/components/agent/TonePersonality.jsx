@@ -63,7 +63,7 @@ const TonePersonality = ({ data }) => {
 
     } catch (error) {
 
-      console.log("Tone update error:", error.response?.data);
+      // console.log("Tone update error:", error.response?.data);
       toast.error("Failed to update tone ❌");
 
     }

@@ -17,7 +17,7 @@ const Navbar = ({ setSidebarOpen }) => {
     '/': 'Dashboard',
     '/conversation': 'Conversation',
     '/leads': 'Leads',
-    '/agent-manage': 'Agent Manage',
+    // '/agent-manage': 'Agent Manage',
     '/admin-manage': 'Admin Manage',
     '/profile': 'Profile',
   };

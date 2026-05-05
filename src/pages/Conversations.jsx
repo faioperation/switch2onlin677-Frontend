@@ -30,7 +30,7 @@ const Conversations = () => {
       // console.log("API RAW:", res.data);
       // API returns a paginated response: { count, next, results: [...] }
       const sendersList = res.data || [];
-      console.log("Senders List:", sendersList);
+      // console.log("Senders List:", sendersList);
 
       const sendersWithLastMessage = await Promise.all(
         sendersList.map(async (item) => {
@@ -97,7 +97,7 @@ const Conversations = () => {
       const res = await axiosSecure.get(
         `/api/v1/conversation/senders/${selectedUser.id}/messages/`
       );
-      console.log("Messages Response:", res.data);
+      // console.log("Messages Response:", res.data);
 
       return res.data.map((msg) => ({
 
