@@ -27,8 +27,10 @@ const Conversations = () => {
     retry: false, // don't retry — a failure should show the page, not hang it
     queryFn: async () => {
       const res = await axiosSecure.get("/api/v1/conversation/senders/");
+      // console.log("API RAW:", res.data);
       // API returns a paginated response: { count, next, results: [...] }
-      const sendersList = res.data.results || [];
+      const sendersList = res.data || [];
+      console.log("Senders List:", sendersList);
 
       const sendersWithLastMessage = await Promise.all(
         sendersList.map(async (item) => {
@@ -84,7 +86,7 @@ const Conversations = () => {
   });
 
 
-      // GET MESSAGES
+  // GET MESSAGES
 
 
   const { data: messages = [], isLoading: msgLoading } = useQuery({
@@ -95,6 +97,7 @@ const Conversations = () => {
       const res = await axiosSecure.get(
         `/api/v1/conversation/senders/${selectedUser.id}/messages/`
       );
+      console.log("Messages Response:", res.data);
 
       return res.data.map((msg) => ({
 
@@ -140,6 +143,10 @@ const Conversations = () => {
   if (isLoading) return <Loader />;
 
   const activeUser = selectedUser;
+
+  // console.log("Selected User:", activeUser);
+  // console.log("Messages:", messages);
+  // console.log("Messages:", messages);
 
   return (
 

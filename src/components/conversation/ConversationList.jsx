@@ -13,8 +13,7 @@ const ConversationList = ({
 
 const filtered = conversations.filter((item) => {
 
-  const name = item.name || ""; // 🔥 fallback
-
+  const name = item.name || ""; 
   const matchSearch = name
     .toLowerCase()
     .includes(search.toLowerCase());
