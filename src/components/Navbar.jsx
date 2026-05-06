@@ -11,6 +11,8 @@ const Navbar = ({ setSidebarOpen }) => {
   const location = useLocation();
   const { profile, avatar, loading } = useAuth();
 
+  console.log("avatar", avatar);
+
 
   // dynamic title
   const switchTitlte = {

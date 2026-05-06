@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X, FileText, Download } from "lucide-react";
 
-const ChatBubble = ({ message }) => {
+const ChatBubble = ({ message, onImageLoad }) => {
 
   const isSent = message.type === "sent";
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +20,7 @@ const ChatBubble = ({ message }) => {
           <img
             src={message.media}
             alt="img"
+            onLoad={onImageLoad}
             className="rounded-lg max-w-[250px] md:max-w-[350px] max-h-[250px] md:max-h-[350px] w-full cursor-pointer object-cover object-top hover:opacity-90 transition-opacity"
             onClick={(e) => {
               e.stopPropagation();
