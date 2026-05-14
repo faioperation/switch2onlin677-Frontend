@@ -121,7 +121,7 @@ const Sidebar = ({ closeSidebar }) => {
           )}
         </NavLink>
 
-        {/* <NavLink to="/settings" className={linkClass} onClick={closeSidebar}>
+        <NavLink to="/settings" className={linkClass} onClick={closeSidebar}>
           {({ isActive }) => (
             <>
               {isActive && (
@@ -131,7 +131,7 @@ const Sidebar = ({ closeSidebar }) => {
               Settings
             </>
           )}
-        </NavLink> */}
+        </NavLink>
 
       </nav>
 

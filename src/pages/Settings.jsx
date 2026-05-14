@@ -1,16 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Pencil } from "lucide-react";
+import useAxiosSecure from "../hooks/useAxios";
 
 const Settings = () => {
     const [rate, setRate] = useState(1530);
     const [isEditing, setIsEditing] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const axiosSecure = useAxiosSecure();
 
-    const handleSave = (e) => {
+    useEffect(() => {
+        const fetchRate = async () => {
+            try {
+                const res = await axiosSecure.get("/api/v1/leads/rate/");
+                if (res.data && res.data.iqd_rate) {
+                    setRate(res.data.iqd_rate);
+                }
+            } catch (error) {
+                console.error("Failed to fetch initial rate:", error);
+            }
+        };
+        fetchRate();
+    }, [axiosSecure]);
+
+    const handleSave = async (e) => {
         e.preventDefault();
-        // Here we would typically make an API call to save the setting
-        toast.success("Settings updated successfully!");
-        setIsEditing(false);
+        
+        setIsLoading(true);
+        try {
+            await axiosSecure.post("/api/v1/leads/rate/", {
+                iqd_rate: Number(rate)
+            });
+            toast.success("Settings updated successfully!");
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Failed to update settings:", error);
+            toast.error(error.response?.data?.message || "Failed to update settings");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -55,14 +83,14 @@ const Settings = () => {
                     <div className="flex justify-end">
                         <button
                             type="submit"
-                            disabled={!isEditing}
+                            disabled={!isEditing || isLoading}
                             className={`font-semibold py-2 px-6 rounded-lg transition-colors ${
                                 isEditing 
                                 ? "bg-[#00CE51] hover:bg-[#00b045] text-[#0B0B0B]" 
                                 : "bg-[#2A2A2A] text-gray-500 cursor-not-allowed"
-                            }`}
+                            } ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
-                            Save Changes
+                            {isLoading ? "Saving..." : "Save Changes"}
                         </button>
                     </div>
                 </form>

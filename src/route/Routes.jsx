@@ -41,10 +41,10 @@ export const router = createBrowserRouter([
                 path: "admin-manage",
                 element: <AdminManage></AdminManage>
             },
-            // {
-            //     path: "settings",
-            //     element: <Settings></Settings>
-            // },
+            {
+                path: "settings",
+                element: <Settings></Settings>
+            },
             {
                 path: "profile",
                 element: <Profile></Profile>
