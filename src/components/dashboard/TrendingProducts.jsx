@@ -22,6 +22,8 @@ const TrendingProducts = () => {
     },
   });
 
+  console.log("trending products data : ", data);
+
   if (isLoading) {
     return (
       <div className="h-[60vh] flex items-center justify-center">

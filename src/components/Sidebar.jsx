@@ -11,7 +11,8 @@ import {
   X,
   Sparkles,
   User,
-  LogIn
+  LogIn,
+  Settings
 } from "lucide-react";
 import { useAuth } from "../pages/Provider/AuthProvider";
 import { toast } from "react-toastify";
@@ -116,6 +117,18 @@ const Sidebar = ({ closeSidebar }) => {
               )}
               <Shield size={18} />
               Admin Manage
+            </>
+          )}
+        </NavLink>
+
+        <NavLink to="/settings" className={linkClass} onClick={closeSidebar}>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
+              )}
+              <Settings size={18} />
+              Settings
             </>
           )}
         </NavLink>

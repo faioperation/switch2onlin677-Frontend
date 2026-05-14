@@ -12,6 +12,7 @@ import PasswordSuccessfull from "../pages/Authintication/PasswordSuccessfull";
 import AgentManage from "../pages/AgentManage";
 import AdminManage from "../pages/AdminManage";
 import Profile from "../pages/Profile";
+import Settings from "../pages/Settings";
 import ErrorPage from "../components/ErrorPage";
 export const router = createBrowserRouter([
     {
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
             {
                 path: "admin-manage",
                 element: <AdminManage></AdminManage>
+            },
+            {
+                path: "settings",
+                element: <Settings></Settings>
             },
             {
                 path: "profile",

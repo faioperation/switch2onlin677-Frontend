@@ -20,6 +20,8 @@ const Dashboard = () => {
     },
   });
 
+  console.log("dashboard stats data : ", stats);
+
   if (isLoading) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
@@ -100,4 +102,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboard;
