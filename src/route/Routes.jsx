@@ -41,10 +41,10 @@ export const router = createBrowserRouter([
                 path: "admin-manage",
                 element: <AdminManage></AdminManage>
             },
-            {
-                path: "settings",
-                element: <Settings></Settings>
-            },
+            // {
+            //     path: "settings",
+            //     element: <Settings></Settings>
+            // },
             {
                 path: "profile",
                 element: <Profile></Profile>
@@ -56,11 +56,11 @@ export const router = createBrowserRouter([
         path: "auth",
         element: <Auth></Auth>,
         children: [
-          { path: "login", element: <Login></Login> },
-          { path: "forget-password", element: <ForgetPassword></ForgetPassword> },
-          { path: "otp", element: <Otp></Otp> },
-          { path: "set-password", element: <SetPassword></SetPassword> },
-          { path: "password-successfull", element: <PasswordSuccessfull></PasswordSuccessfull> },
+            { path: "login", element: <Login></Login> },
+            { path: "forget-password", element: <ForgetPassword></ForgetPassword> },
+            { path: "otp", element: <Otp></Otp> },
+            { path: "set-password", element: <SetPassword></SetPassword> },
+            { path: "password-successfull", element: <PasswordSuccessfull></PasswordSuccessfull> },
         ],
-      },
+    },
 ]);
