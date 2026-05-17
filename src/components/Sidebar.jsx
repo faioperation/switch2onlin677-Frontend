@@ -12,7 +12,9 @@ import {
   Sparkles,
   User,
   LogIn,
-  Settings
+  Settings,
+  Package,
+  Upload
 } from "lucide-react";
 import { useAuth } from "../pages/Provider/AuthProvider";
 import { toast } from "react-toastify";
@@ -91,6 +93,30 @@ const Sidebar = ({ closeSidebar }) => {
               )}
               <Users size={18} />
               Leads
+            </>
+          )}
+        </NavLink>
+
+        <NavLink to="/products" className={linkClass} onClick={closeSidebar}>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
+              )}
+              <Package size={18} />
+              Products
+            </>
+          )}
+        </NavLink>
+
+        <NavLink to="/product-upload" className={linkClass} onClick={closeSidebar}>
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <span className="absolute left-0 top-0 h-full w-[5px] bg-[#00CE51]" />
+              )}
+              <Upload size={18} />
+              Product Upload
             </>
           )}
         </NavLink>

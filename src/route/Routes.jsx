@@ -13,6 +13,10 @@ import AgentManage from "../pages/AgentManage";
 import AdminManage from "../pages/AdminManage";
 import Profile from "../pages/Profile";
 import Settings from "../pages/Settings";
+import Products from "../pages/Products";
+import ProductUpload from "../pages/ProductUpload";
+import ProductView from "../pages/ProductView";
+import ProductEdit from "../pages/ProductEdit";
 import ErrorPage from "../components/ErrorPage";
 export const router = createBrowserRouter([
     {
@@ -36,6 +40,22 @@ export const router = createBrowserRouter([
             {
                 path: "leads",
                 element: <Leads></Leads>
+            },
+            {
+                path: "products",
+                element: <Products></Products>
+            },
+            {
+                path: "products/view/:barcode",
+                element: <ProductView></ProductView>
+            },
+            {
+                path: "products/edit/:barcode",
+                element: <ProductEdit></ProductEdit>
+            },
+            {
+                path: "product-upload",
+                element: <ProductUpload></ProductUpload>
             },
             {
                 path: "admin-manage",
