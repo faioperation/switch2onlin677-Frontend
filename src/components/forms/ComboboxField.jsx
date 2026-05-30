@@ -131,7 +131,7 @@ const ComboboxField = ({
         name={name}
         control={control}
         render={({ field: { value, onChange } }) => {
-          const selectedItem = options.find((opt) => opt.id === value);
+          const selectedItem = options.find((opt) => String(opt.id) === String(value));
           const displayValue = selectedItem
             ? `${selectedItem.name} ${selectedItem.name_ar ? `(${selectedItem.name_ar})` : ""}`
             : "";
@@ -206,7 +206,7 @@ const ComboboxField = ({
                       </div>
                     ) : (
                       filteredOptions.map((opt, index) => {
-                        const isSelected = opt.id === value;
+                        const isSelected = String(opt.id) === String(value);
                         const isHighlighted = index === highlightedIndex;
                         return (
                           <div

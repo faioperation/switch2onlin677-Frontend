@@ -1,5 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import ChatBubble from "./ChatBubble";
+import DateSeparator from "./DateSeparator";
+import { groupMessagesByDate } from "../../utils/dateUtils";
 
 const ChatMessages = ({ messages, selectedUserId }) => {
   const scrollRef = useRef(null);
@@ -58,17 +60,27 @@ const ChatMessages = ({ messages, selectedUserId }) => {
     }
   };
 
+  // Group messages by local date. Re-computed only when the messages array reference changes.
+  const groups = useMemo(() => groupMessagesByDate(messages), [messages]);
+
   return (
     <div
       ref={scrollRef}
       className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5"
     >
-      {messages.map((msg) => (
-        <ChatBubble 
-          key={msg.id} 
-          message={msg} 
-          onImageLoad={handleImageLoad}
-        />
+      {groups.map((group) => (
+        <div key={group.dateKey}>
+          <DateSeparator label={group.label} />
+          <div className="space-y-5 mt-3">
+            {group.messages.map((msg) => (
+              <ChatBubble
+                key={msg.id}
+                message={msg}
+                onImageLoad={handleImageLoad}
+              />
+            ))}
+          </div>
+        </div>
       ))}
       <div className="h-2 w-full" />
     </div>

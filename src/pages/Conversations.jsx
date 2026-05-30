@@ -108,6 +108,8 @@ const Conversations = () => {
 
         type: msg.is_from_customer ? "received" : "sent",
 
+        rawTimestamp: msg.timestamp ?? null,
+
         time: msg.timestamp
           ? new Date(msg.timestamp).toLocaleTimeString([], {
             hour: "2-digit",

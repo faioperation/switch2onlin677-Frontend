@@ -3,17 +3,17 @@ import { useParams, Link, useNavigate } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../hooks/useAxios";
 import Swal from "sweetalert2";
-import { 
-  ChevronLeft, 
-  Edit2, 
-  Trash2, 
-  Barcode, 
-  Layers, 
-  Tag, 
-  AlertTriangle, 
-  CheckCircle, 
-  Package, 
-  DollarSign, 
+import {
+  ChevronLeft,
+  Edit2,
+  Trash2,
+  Barcode,
+  Layers,
+  Tag,
+  AlertTriangle,
+  CheckCircle,
+  Package,
+  DollarSign,
   ShieldAlert,
   Loader2,
   Sparkles,
@@ -21,7 +21,10 @@ import {
   FileText,
   Award,
   Globe,
-  TrendingUp
+  TrendingUp,
+  Users,
+  Activity,
+  Percent
 } from "lucide-react";
 
 // Local ProductImage with premium letter-based fail-safe
@@ -66,6 +69,29 @@ const ProductImageLarge = ({ src, name }) => {
       className="w-full h-72 sm:h-96 object-cover rounded-xl border border-[#262626]"
     />
   );
+};
+
+// Reusable truthy parser (mirrors the isBestSelling logic)
+const parseBoolField = (val) => {
+  if (val === null || val === undefined) return false;
+  return (
+    val === true || val === 1 || val === "1" ||
+    String(val).toLowerCase() === "true" ||
+    String(val).toLowerCase() === "yes"
+  );
+};
+
+const PRICE_TIER_CONFIG = {
+  budget:  { label: "Budget",    cls: "bg-blue-500/10 text-blue-400 border-blue-500/20" },
+  mid:     { label: "Mid-Range", cls: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
+  premium: { label: "Premium",   cls: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
+  luxury:  { label: "Luxury",    cls: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
+};
+
+const PRODUCT_STATUS_CONFIG = {
+  active:   { label: "Active",   cls: "bg-[#00CE51]/10 text-[#00CE51] border-[#00CE51]/20" },
+  inactive: { label: "Inactive", cls: "bg-red-500/10 text-red-400 border-red-500/20" },
+  draft:    { label: "Draft",    cls: "bg-amber-500/10 text-amber-400 border-amber-500/20" },
 };
 
 const ProductView = () => {
@@ -146,6 +172,12 @@ const ProductView = () => {
            String(val).toLowerCase() === "yes" || 
            String(val).toLowerCase() === "y";
   })();
+
+  const isNewArrival      = parseBoolField(product?.is_new_arrival);
+  const isRecommended     = parseBoolField(product?.is_recommended);
+  const isCodRecommended  = parseBoolField(product?.is_cod_recommended);
+  const priceTierConfig   = PRICE_TIER_CONFIG[product?.price_tier?.toLowerCase()] ?? null;
+  const productStatusConfig = PRODUCT_STATUS_CONFIG[product?.product_status?.toLowerCase()] ?? null;
 
   const handleDelete = () => {
     Swal.fire({
@@ -327,6 +359,53 @@ const ProductView = () => {
                 </div>
               </div>
 
+              {/* Product Status */}
+              <div className="bg-[#0B0B0B] border border-[#222] p-4 rounded-lg flex items-center gap-3">
+                <div className="p-2.5 bg-white/5 text-gray-400 rounded-lg flex-shrink-0">
+                  <Activity size={18} className={productStatusConfig ? "" : "text-gray-600"} />
+                </div>
+                <div className="truncate text-left">
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Product Status</p>
+                  {productStatusConfig ? (
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold mt-0.5 border ${productStatusConfig.cls}`}>
+                      {productStatusConfig.label}
+                    </span>
+                  ) : (
+                    <p className="text-sm text-gray-600 font-semibold mt-0.5">Not Set</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Price Tier */}
+              <div className="bg-[#0B0B0B] border border-[#222] p-4 rounded-lg flex items-center gap-3">
+                <div className="p-2.5 bg-white/5 text-gray-400 rounded-lg flex-shrink-0">
+                  <DollarSign size={18} className={priceTierConfig ? "" : "text-gray-600"} />
+                </div>
+                <div className="truncate text-left">
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Price Tier</p>
+                  {priceTierConfig ? (
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold mt-0.5 border ${priceTierConfig.cls}`}>
+                      {priceTierConfig.label}
+                    </span>
+                  ) : (
+                    <p className="text-sm text-gray-600 font-semibold mt-0.5">Not Set</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Brand Family */}
+              {product.brand_family ? (
+                <div className="bg-[#0B0B0B] border border-[#222] p-4 rounded-lg flex items-center gap-3">
+                  <div className="p-2.5 bg-white/5 text-gray-400 rounded-lg flex-shrink-0">
+                    <Users size={18} />
+                  </div>
+                  <div className="truncate text-left">
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Brand Family</p>
+                    <p className="text-sm text-white font-semibold mt-0.5 truncate">{product.brand_family}</p>
+                  </div>
+                </div>
+              ) : null}
+
             </div>
           </div>
 
@@ -357,6 +436,23 @@ const ProductView = () => {
                     🔥 Rank #{product.sales_rank}
                   </span>
                 ) : null}
+
+                {/* Recommendation Flags */}
+                {isNewArrival && (
+                  <span className="px-2.5 py-1 rounded bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-widest border border-cyan-500/20">
+                    ✦ New Arrival
+                  </span>
+                )}
+                {isRecommended && (
+                  <span className="px-2.5 py-1 rounded bg-[#00CE51]/10 text-[#00CE51] text-xs font-bold uppercase tracking-widest border border-[#00CE51]/20">
+                    ✓ Recommended
+                  </span>
+                )}
+                {isCodRecommended && (
+                  <span className="px-2.5 py-1 rounded bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-widest border border-indigo-500/20">
+                    💳 COD Recommended
+                  </span>
+                )}
               </div>
 
               <h2 className="text-3xl font-black text-white mt-4 tracking-tight leading-tight">
@@ -466,8 +562,72 @@ const ProductView = () => {
                   </p>
                 </div>
               </div>
+
+              {/* Recommendation Priority */}
+              {product.recommendation_priority != null && (
+                <div className="bg-[#0B0B0B] border border-[#222] p-4 rounded-lg flex items-center gap-3">
+                  <div className="p-2.5 bg-white/5 text-gray-400 rounded-lg flex-shrink-0">
+                    <TrendingUp size={18} className="text-[#00CE51]" />
+                  </div>
+                  <div className="truncate text-left">
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Rec. Priority</p>
+                    <p className="text-sm text-white font-semibold mt-0.5">
+                      {product.recommendation_priority}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Recommendation Score Override */}
+              {product.recommendation_score_override != null && (
+                <div className="bg-[#0B0B0B] border border-[#222] p-4 rounded-lg flex items-center gap-3">
+                  <div className="p-2.5 bg-white/5 text-gray-400 rounded-lg flex-shrink-0">
+                    <Sparkles size={18} className="text-purple-400" />
+                  </div>
+                  <div className="truncate text-left">
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Score Override</p>
+                    <p className="text-sm text-white font-semibold mt-0.5">
+                      {product.recommendation_score_override}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Bundle Configuration Card (only when configured) */}
+          {(product.bundle_group || product.bundle_discount_percent != null) && (
+            <div className="bg-[#1A1A1A] border border-[#262626] rounded-xl p-6 space-y-4">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <Package size={16} className="text-[#00CE51]" />
+                <span>Bundle Configuration</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="bg-[#0B0B0B] border border-[#222] p-4 rounded-lg flex items-center gap-3">
+                  <div className="p-2.5 bg-white/5 text-gray-400 rounded-lg flex-shrink-0">
+                    <Package size={18} />
+                  </div>
+                  <div className="truncate text-left">
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Bundle Group</p>
+                    <p className="text-sm text-white font-semibold mt-0.5 truncate">
+                      {product.bundle_group || "No Bundle"}
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-[#0B0B0B] border border-[#222] p-4 rounded-lg flex items-center gap-3">
+                  <div className="p-2.5 bg-white/5 text-gray-400 rounded-lg flex-shrink-0">
+                    <Percent size={18} />
+                  </div>
+                  <div className="truncate text-left">
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Bundle Discount</p>
+                    <p className="text-sm text-white font-semibold mt-0.5">
+                      {product.bundle_discount_percent != null ? `${product.bundle_discount_percent}%` : "—"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Skincare & Formulation Attributes Card */}
           {(product.skin_type || product.concerns || product.tags) ? (

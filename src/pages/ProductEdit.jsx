@@ -22,7 +22,8 @@ import {
   Star,
   Activity,
   Tag,
-  Heart
+  Heart,
+  Percent
 } from "lucide-react";
 
 // Form Components
@@ -54,6 +55,32 @@ const scopeOptions = [
   { value: "category", label: "Category-wide" },
   { value: "brand", label: "Brand-wide" },
   { value: "subcategory", label: "Subcategory-wide" },
+];
+
+// Converts null / comma-string / pipe-string / array → clean string array
+const parseTagsArray = (val) => {
+  if (!val) return [];
+  if (Array.isArray(val)) return val.map(String).filter(Boolean);
+  if (typeof val === "string") {
+    const sep = val.includes("|") ? "|" : ",";
+    return val.split(sep).map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+};
+
+const priceTierOptions = [
+  { value: "", label: "Not Assigned" },
+  { value: "budget",  label: "Budget" },
+  { value: "mid",     label: "Mid-Range" },
+  { value: "premium", label: "Premium" },
+  { value: "luxury",  label: "Luxury" },
+];
+
+const productStatusOptions = [
+  { value: "",         label: "No Status Set" },
+  { value: "active",   label: "Active" },
+  { value: "inactive", label: "Inactive" },
+  { value: "draft",    label: "Draft" },
 ];
 
 const concernPresets = [
@@ -114,6 +141,19 @@ const ProductEdit = () => {
       is_best_selling: 0,
       best_selling_scope: "",
       sales_rank: null,
+      // Classification extras
+      price_tier: "",
+      brand_family: "",
+      product_status: "",
+      // Recommendation
+      is_new_arrival: 0,
+      is_recommended: 0,
+      is_cod_recommended: 0,
+      recommendation_priority: null,
+      recommendation_score_override: null,
+      // Bundle
+      bundle_group: "",
+      bundle_discount_percent: null,
     }
   });
 
@@ -161,17 +201,31 @@ const ProductEdit = () => {
         item_name: prod.item_name || "",
         description: prod.description || "",
         image_url: prod.image_url || "",
-        brand_id: prod.brand_id || null,
-        category_id: prod.category_id || null,
-        subcategory_id: prod.subcategory_id || null,
-        skin_type: prod.skin_type || "",
-        concerns: prod.concerns || [],
-        tags: prod.tags || [],
+        // IDs: prefer the flat field, fall back to the nested object's id
+        brand_id: prod.brand_id ?? (typeof prod.brand === "object" ? prod.brand?.id : null) ?? null,
+        category_id: prod.category_id ?? (typeof prod.category === "object" ? prod.category?.id : null) ?? null,
+        subcategory_id: prod.subcategory_id ?? (typeof prod.subcategory === "object" ? prod.subcategory?.id : null) ?? null,
+        skin_type: (prod.skin_type || "").toLowerCase(),
+        concerns: parseTagsArray(prod.concerns),
+        tags: parseTagsArray(prod.tags),
         price: Number(prod.price) || 0,
         available_qty: Number(prod.available_qty) || 0,
         is_best_selling: Number(prod.is_best_selling) === 1 ? 1 : 0,
         best_selling_scope: prod.best_selling_scope || "",
         sales_rank: prod.sales_rank || null,
+        // Classification extras — normalize to lowercase so selects match option values
+        price_tier: (prod.price_tier || "").toLowerCase(),
+        brand_family: prod.brand_family || "",
+        product_status: prod.product_status || "",
+        // Recommendation
+        is_new_arrival: Number(prod.is_new_arrival) === 1 ? 1 : 0,
+        is_recommended: Number(prod.is_recommended) === 1 ? 1 : 0,
+        is_cod_recommended: Number(prod.is_cod_recommended) === 1 ? 1 : 0,
+        recommendation_priority: prod.recommendation_priority ?? null,
+        recommendation_score_override: prod.recommendation_score_override ?? null,
+        // Bundle
+        bundle_group: prod.bundle_group || "",
+        bundle_discount_percent: prod.bundle_discount_percent ?? null,
       });
       setOriginalBarcode(prod.barcode || "");
       setOriginalItemCode(prod.item_code || "");
@@ -182,6 +236,36 @@ const ProductEdit = () => {
       }, 200);
     }
   }, [productRes, reset]);
+
+  // Brand name-based lookup: runs after the brands list is available.
+  // Uses setValue (not reset) so it doesn't touch other fields or trigger cascades.
+  // Only fires when direct ID resolution in the reset() above returned null.
+  useEffect(() => {
+    const prod = productRes?.data || productRes;
+    if (!prod || !brands.length) return;
+
+    // If a direct ID was already resolved, nothing to do
+    const directId =
+      prod.brand_id ??
+      (typeof prod.brand === "object" ? prod.brand?.id : null);
+    if (directId) return;
+
+    // Fall back to name match
+    const brandName =
+      typeof prod.brand === "string"
+        ? prod.brand
+        : prod.brand_name ?? null;
+    if (!brandName) return;
+
+    const matched = brands.find(
+      (b) =>
+        b.name?.toLowerCase() === brandName.toLowerCase() ||
+        b.name_ar === brandName
+    );
+    if (matched) {
+      setValue("brand_id", matched.id, { shouldDirty: false });
+    }
+  }, [productRes, brands, setValue]);
 
   // Cascade Rule: Clear subcategory when category changes
   useEffect(() => {
@@ -463,41 +547,74 @@ const ProductEdit = () => {
 
             {/* SECTION 3: CLASSIFICATION */}
             <FormSection title="Section 3: Classification" icon={Layers}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <ComboboxField
-                  label="Brand"
-                  name="brand_id"
-                  control={control}
-                  error={errors.brand_id}
-                  icon={Star}
-                  entityType="brand"
-                  axios={axiosSecure}
-                  placeholder="Select or Create Brand..."
-                />
+              <div className="space-y-5">
+                {/* Row 1: Brand / Category / Subcategory (unchanged) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <ComboboxField
+                    label="Brand"
+                    name="brand_id"
+                    control={control}
+                    error={errors.brand_id}
+                    icon={Star}
+                    entityType="brand"
+                    axios={axiosSecure}
+                    placeholder="Select or Create Brand..."
+                  />
 
-                <ComboboxField
-                  label="Main Category"
-                  name="category_id"
-                  control={control}
-                  error={errors.category_id}
-                  icon={Layers}
-                  entityType="category"
-                  axios={axiosSecure}
-                  placeholder="Select or Create Category..."
-                />
+                  <ComboboxField
+                    label="Main Category"
+                    name="category_id"
+                    control={control}
+                    error={errors.category_id}
+                    icon={Layers}
+                    entityType="category"
+                    axios={axiosSecure}
+                    placeholder="Select or Create Category..."
+                  />
 
-                <ComboboxField
-                  label="Subcategory"
-                  name="subcategory_id"
-                  control={control}
-                  error={errors.subcategory_id}
-                  icon={Layers}
-                  entityType="subcategory"
-                  categoryId={selectedCategoryId}
-                  categoryName={selectedCategoryName}
-                  axios={axiosSecure}
-                  placeholder="Select Subcategory..."
-                />
+                  <ComboboxField
+                    label="Subcategory"
+                    name="subcategory_id"
+                    control={control}
+                    error={errors.subcategory_id}
+                    icon={Layers}
+                    entityType="subcategory"
+                    categoryId={selectedCategoryId}
+                    categoryName={selectedCategoryName}
+                    axios={axiosSecure}
+                    placeholder="Select Subcategory..."
+                  />
+                </div>
+
+                {/* Row 2: Price Tier / Brand Family / Product Status */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <SelectField
+                    label="Price Tier"
+                    name="price_tier"
+                    register={register}
+                    error={errors.price_tier}
+                    icon={DollarSign}
+                    options={priceTierOptions}
+                  />
+
+                  <TextField
+                    label="Brand Family"
+                    name="brand_family"
+                    register={register}
+                    error={errors.brand_family}
+                    icon={Star}
+                    placeholder="e.g. L'Oréal Group"
+                  />
+
+                  <SelectField
+                    label="Product Status"
+                    name="product_status"
+                    register={register}
+                    error={errors.product_status}
+                    icon={Activity}
+                    options={productStatusOptions}
+                  />
+                </div>
               </div>
             </FormSection>
 
@@ -591,6 +708,80 @@ const ProductEdit = () => {
                   icon={TrendingUp}
                   min="1"
                   placeholder="e.g. 1"
+                />
+              </div>
+            </FormSection>
+
+            {/* SECTION 7: RECOMMENDATION SETTINGS */}
+            <FormSection title="Section 7: Recommendation Settings" icon={Sparkles}>
+              <div className="space-y-5">
+                {/* Toggles row */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
+                  <ToggleField
+                    label="New Arrival"
+                    name="is_new_arrival"
+                    control={control}
+                    icon={Sparkles}
+                  />
+                  <ToggleField
+                    label="Recommended"
+                    name="is_recommended"
+                    control={control}
+                    icon={TrendingUp}
+                  />
+                  <ToggleField
+                    label="COD Recommended"
+                    name="is_cod_recommended"
+                    control={control}
+                    icon={Globe}
+                  />
+                </div>
+                {/* Score fields row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <NumberField
+                    label="Recommendation Priority"
+                    name="recommendation_priority"
+                    register={register}
+                    error={errors.recommendation_priority}
+                    icon={TrendingUp}
+                    min="0"
+                    placeholder="e.g. 10"
+                  />
+                  <NumberField
+                    label="Score Override"
+                    name="recommendation_score_override"
+                    register={register}
+                    error={errors.recommendation_score_override}
+                    icon={Activity}
+                    step="0.01"
+                    min="0"
+                    placeholder="e.g. 0.95"
+                  />
+                </div>
+              </div>
+            </FormSection>
+
+            {/* SECTION 8: BUNDLE CONFIGURATION */}
+            <FormSection title="Section 8: Bundle Configuration" icon={Package}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <TextField
+                  label="Bundle Group"
+                  name="bundle_group"
+                  register={register}
+                  error={errors.bundle_group}
+                  icon={Tag}
+                  placeholder="e.g. skincare-starter-kit"
+                />
+                <NumberField
+                  label="Bundle Discount (%)"
+                  name="bundle_discount_percent"
+                  register={register}
+                  error={errors.bundle_discount_percent}
+                  icon={Percent}
+                  step="0.01"
+                  min="0"
+                  max="100"
+                  placeholder="e.g. 15"
                 />
               </div>
             </FormSection>
