@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, NavLink, useNavigate } from "react-router";
-import logo from '../assets/Vector.png'
+import logo from '../assets/logo.png';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -44,8 +44,8 @@ const Sidebar = ({ closeSidebar }) => {
       <Link to={'/'} className="flex flex-col items-center py-5">
 
         <div className="flex items-center gap-2 text-white text-lg font-semibold">
-          <img src={logo} alt="logo" className="w-8 h-8" />
-          <h1 className="text-3xl font-semibold">LoGo</h1>
+          <img src={logo} alt="logo" className="w-20 h-20" />
+          {/* <h1 className="text-3xl font-semibold">LoGo</h1> */}
         </div>
 
       </Link>
