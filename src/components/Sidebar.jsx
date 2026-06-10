@@ -44,14 +44,14 @@ const Sidebar = ({ closeSidebar }) => {
       <Link to={'/'} className="flex flex-col items-center py-5">
 
         <div className="flex items-center gap-2 text-white text-lg font-semibold">
-          <img src={logo} alt="logo" className="w-20 h-20" />
+          <img src={logo} alt="logo" className="w-16 h-16" />
           {/* <h1 className="text-3xl font-semibold">LoGo</h1> */}
         </div>
 
       </Link>
 
       {/* Divider */}
-      <div className="border-t border-[#1F1F1F] mb-6"></div>
+      {/* <div className="border-t border-[#1F1F1F] mb-6"></div> */}
 
       {/* Navigation */}
       <nav className="flex flex-col gap-2 pr-4 pl-0">
