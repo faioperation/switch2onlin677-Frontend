@@ -129,6 +129,21 @@ const Products = () => {
   const total = data?.data?.pagination?.total || data?.count || 0;
   const totalPages = data?.data?.pagination?.total_pages || Math.ceil(total / limit) || 0;
 
+  // Mirrors the active query params so the export matches what the user currently sees
+  const exportFilters = useMemo(() => {
+    const f = {};
+    if (debouncedSearch) f.q = debouncedSearch;
+    if (brandId) f.brand_id = Number(brandId);
+    if (categoryId) f.category_id = Number(categoryId);
+    if (subcategoryId) f.subcategory_id = Number(subcategoryId);
+    if (isBestSelling) f.is_best_selling = Number(isBestSelling);
+    if (inStock !== "") f.in_stock = inStock === "true";
+    if (debouncedMinPrice) f.min_price = Number(debouncedMinPrice);
+    if (debouncedMaxPrice) f.max_price = Number(debouncedMaxPrice);
+    if (sortBy) f.sort_by = sortBy;
+    return f;
+  }, [debouncedSearch, brandId, categoryId, subcategoryId, isBestSelling, inStock, debouncedMinPrice, debouncedMaxPrice, sortBy]);
+
   // Clear all filters back to default values
   const handleResetFilters = () => {
     setSearch("");
@@ -213,6 +228,7 @@ const Products = () => {
           filtersLoading={filtersLoading}
           
           isFetching={isFetching}
+          exportFilters={exportFilters}
         />
 
         {/* Error Handling State */}

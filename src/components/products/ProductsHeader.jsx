@@ -15,6 +15,7 @@ import {
   SlidersHorizontal
 } from "lucide-react";
 import { Link } from "react-router";
+import ExportProductsButton from "./ExportProductsButton";
 
 const ProductsHeader = ({
   search,
@@ -41,7 +42,8 @@ const ProductsHeader = ({
   subcategories = [],
   brands = [],
   filtersLoading,
-  isFetching
+  isFetching,
+  exportFilters = {},
 }) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
@@ -159,6 +161,9 @@ const ProductsHeader = ({
             )}
             {isFiltersOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
+
+          {/* Export Button */}
+          <ExportProductsButton filters={exportFilters} />
 
           {/* Upload Button */}
           <Link
