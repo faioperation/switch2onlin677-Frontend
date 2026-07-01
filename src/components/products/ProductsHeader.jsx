@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router";
 import ExportProductsButton from "./ExportProductsButton";
+import SyncPricesButton from "./SyncPricesButton";
 
 const ProductsHeader = ({
   search,
@@ -44,6 +45,7 @@ const ProductsHeader = ({
   filtersLoading,
   isFetching,
   exportFilters = {},
+  onSyncComplete,
 }) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
@@ -161,6 +163,9 @@ const ProductsHeader = ({
             )}
             {isFiltersOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
+
+          {/* Sync Prices Button */}
+          <SyncPricesButton onSyncComplete={onSyncComplete} />
 
           {/* Export Button */}
           <ExportProductsButton filters={exportFilters} />

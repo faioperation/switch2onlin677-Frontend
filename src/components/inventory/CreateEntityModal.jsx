@@ -21,9 +21,9 @@ const CreateEntityModal = ({ isOpen, onClose, entityType, initialName, categoryI
         
         const fetchCategories = async () => {
           try {
-            const res = await axios.get("/api/v1/categories/", { params: { is_active: "true", limit: 1000 } });
+            const res = await axios.get("/api/v1/categories/", { params: { is_active: "true", limit: 100 } });
             if (res.data?.success) {
-              setCategories(res.data.data || []);
+              setCategories(res.data.data?.categories || []);
             }
           } catch (err) {
             console.error("Failed to load categories in modal", err);

@@ -172,9 +172,11 @@ const ProductsTable = ({ data = [], isLoading, isFetching, onDelete }) => {
                         <div className="text-white font-semibold line-clamp-1 group-hover:text-[#00CE51] transition-colors">
                           {item.item_name}
                         </div>
-                        <div className="text-xs text-gray-500 mt-0.5 font-medium truncate">
-                          {item.subcategory_name || "Uncategorized"}
-                        </div>
+                        {item.subcategory?.name && (
+                          <div className="text-xs text-gray-500 mt-0.5 font-medium truncate">
+                            {item.subcategory.name}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </td>
@@ -186,13 +188,13 @@ const ProductsTable = ({ data = [], isLoading, isFetching, onDelete }) => {
                   
                   {/* Brand name */}
                   <td className="px-6 py-4 text-gray-300 font-medium">
-                    {item.brand_name || "Generic"}
+                    {item.brand?.name || "Generic"}
                   </td>
-                  
+
                   {/* Category Badge */}
                   <td className="px-6 py-4">
                     <span className="px-2.5 py-1 rounded-md bg-[#161616] text-[11px] text-gray-400 font-bold border border-[#222]">
-                      {item.category_name || "N/A"}
+                      {item.category?.name || "N/A"}
                     </span>
                   </td>
                   

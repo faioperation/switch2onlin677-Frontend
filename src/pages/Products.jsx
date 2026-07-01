@@ -229,6 +229,7 @@ const Products = () => {
           
           isFetching={isFetching}
           exportFilters={exportFilters}
+          onSyncComplete={refetch}
         />
 
         {/* Error Handling State */}

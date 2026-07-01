@@ -1,7 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import { ChevronDown, Plus, Check, Loader2 } from "lucide-react";
 import CreateEntityModal from "../inventory/CreateEntityModal";
+
+const ENTITY_DETAIL_URL = {
+  brand: (id) => `/api/v1/brands/${id}/`,
+  category: (id) => `/api/v1/categories/${id}/`,
+  subcategory: (id) => `/api/v1/subcategories/${id}/`,
+};
+
+// The list-response wrapper key doesn't follow simple `${entityType}s`
+// pluralization ("category" -> "categories", not "categorys"), so it must
+// be mapped explicitly rather than string-concatenated.
+const ENTITY_LIST_KEY = {
+  brand: "brands",
+  category: "categories",
+  subcategory: "subcategories",
+};
 
 const ComboboxField = ({
   label,
@@ -24,18 +39,32 @@ const ComboboxField = ({
   const [showInactive, setShowInactive] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [selectedEntity, setSelectedEntity] = useState(null);
 
   const containerRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  const fetchOptions = async () => {
+  // Current field value tracked independently of Controller's render-prop so
+  // we can resolve its display label even when it isn't in the current
+  // (server-paginated / search-filtered) options page.
+  const watchedId = useWatch({ control, name });
+
+  // Guards against out-of-order responses: every fetch gets a ticket number,
+  // and only the response matching the *latest* ticket is allowed to update
+  // state. Without this, a slow earlier request (e.g. a stale search) can
+  // resolve after a newer one and silently clobber it with wrong/empty data.
+  const requestIdRef = useRef(0);
+
+  const fetchOptions = async (search = "") => {
     if (disabled) return;
+    const requestId = ++requestIdRef.current;
     setLoading(true);
     try {
       let url = "";
       let params = {
         is_active: !showInactive ? "true" : undefined,
-        limit: 500,
+        limit: 100, // backend hard-caps limit at 100
+        search: search.trim() || undefined, // server-side search — backend has thousands of rows
       };
 
       if (entityType === "brand") {
@@ -50,19 +79,66 @@ const ComboboxField = ({
       }
 
       const res = await axios.get(url, { params });
+      if (requestId !== requestIdRef.current) return; // a newer request superseded this one — ignore
       if (res.data?.success) {
-        setOptions(res.data.data || []);
+        setOptions(res.data.data?.[ENTITY_LIST_KEY[entityType]] || []);
       }
     } catch (err) {
+      if (requestId !== requestIdRef.current) return;
       console.error(`Failed to fetch ${entityType} options`, err);
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) setLoading(false);
     }
   };
 
+  // Single source of truth for (re)loading the options list — fires on
+  // mount, when the entity type / parent category / inactive toggle
+  // changes, when the dropdown is (re)opened, and (debounced) as the user
+  // types a search term. Consolidated into one effect so there is only ever
+  // one "latest" fetch in flight per state change, instead of two effects
+  // independently racing each other.
   useEffect(() => {
-    fetchOptions();
-  }, [entityType, categoryId, showInactive, disabled]);
+    const delay = isOpen && searchTerm ? 300 : 0;
+    const timer = setTimeout(() => {
+      fetchOptions(searchTerm);
+    }, delay);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entityType, categoryId, showInactive, disabled, isOpen, searchTerm]);
+
+  // Resolve the label for the currently selected id even if it isn't part
+  // of the loaded/search-filtered options page (e.g. a brand outside the
+  // first 100 alphabetically, or not matching the active search term).
+  useEffect(() => {
+    if (!watchedId) {
+      setSelectedEntity(null);
+      return;
+    }
+    const found = options.find((opt) => String(opt.id) === String(watchedId));
+    if (found) {
+      setSelectedEntity(found);
+      return;
+    }
+
+    let cancelled = false;
+    const fetchSelected = async () => {
+      try {
+        const detailUrl = ENTITY_DETAIL_URL[entityType]?.(watchedId);
+        if (!detailUrl) return;
+        const res = await axios.get(detailUrl);
+        if (!cancelled && res.data?.success) {
+          setSelectedEntity(res.data.data);
+        }
+      } catch (err) {
+        console.error(`Failed to fetch selected ${entityType}`, err);
+      }
+    };
+    fetchSelected();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedId, entityType]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -73,13 +149,6 @@ const ComboboxField = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const filteredOptions = options.filter((opt) => {
-    const term = searchTerm.toLowerCase();
-    const matchName = opt.name?.toLowerCase().includes(term);
-    const matchNameAr = opt.name_ar?.toLowerCase().includes(term);
-    return matchName || matchNameAr;
-  });
 
   const exactMatchExists = options.some(
     (opt) => opt.name?.toLowerCase() === searchTerm.trim().toLowerCase()
@@ -99,7 +168,7 @@ const ComboboxField = ({
       e.preventDefault();
     } else if (e.key === "ArrowDown") {
       setHighlightedIndex((prev) =>
-        prev < filteredOptions.length - 1 ? prev + 1 : prev
+        prev < options.length - 1 ? prev + 1 : prev
       );
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
@@ -107,8 +176,8 @@ const ComboboxField = ({
       e.preventDefault();
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
-        const selected = filteredOptions[highlightedIndex];
+      if (highlightedIndex >= 0 && highlightedIndex < options.length) {
+        const selected = options[highlightedIndex];
         onChange(selected.id);
         setSearchTerm("");
         setIsOpen(false);
@@ -131,9 +200,8 @@ const ComboboxField = ({
         name={name}
         control={control}
         render={({ field: { value, onChange } }) => {
-          const selectedItem = options.find((opt) => String(opt.id) === String(value));
-          const displayValue = selectedItem
-            ? `${selectedItem.name} ${selectedItem.name_ar ? `(${selectedItem.name_ar})` : ""}`
+          const displayValue = selectedEntity
+            ? `${selectedEntity.name} ${selectedEntity.name_ar ? `(${selectedEntity.name_ar})` : ""}`
             : "";
 
           return (
@@ -181,7 +249,7 @@ const ComboboxField = ({
                 >
                   <div className="flex items-center justify-between p-2 border-b border-[#262626] bg-[#111] shrink-0">
                     <span className="text-[9px] font-extrabold text-gray-500 uppercase tracking-widest pl-1.5">
-                      {filteredOptions.length} OPTIONS
+                      {options.length} OPTIONS{options.length >= 100 ? " (refine search)" : ""}
                     </span>
                     <label className="flex items-center gap-1.5 cursor-pointer text-[10px] text-gray-400 font-bold select-none pr-1">
                       <input
@@ -200,12 +268,12 @@ const ComboboxField = ({
                         <Loader2 size={16} className="animate-spin text-[#00CE51]" />
                         <span>Loading...</span>
                       </div>
-                    ) : filteredOptions.length === 0 ? (
+                    ) : options.length === 0 ? (
                       <div className="p-4 text-center text-gray-500 text-xs">
                         No matches found
                       </div>
                     ) : (
-                      filteredOptions.map((opt, index) => {
+                      options.map((opt, index) => {
                         const isSelected = String(opt.id) === String(value);
                         const isHighlighted = index === highlightedIndex;
                         return (
@@ -213,6 +281,7 @@ const ComboboxField = ({
                             key={opt.id}
                             onClick={() => {
                               onChange(opt.id);
+                              setSelectedEntity(opt);
                               setSearchTerm("");
                               setIsOpen(false);
                             }}
@@ -267,8 +336,9 @@ const ComboboxField = ({
                 categoryId={categoryId}
                 categoryName={categoryName}
                 onCreateSuccess={(newEntity) => {
-                  fetchOptions().then(() => {
+                  fetchOptions(searchTerm).then(() => {
                     onChange(newEntity.id);
+                    setSelectedEntity(newEntity);
                     setSearchTerm("");
                     setIsOpen(false);
                   });

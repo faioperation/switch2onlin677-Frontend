@@ -175,20 +175,20 @@ const ProductEdit = () => {
   const { data: brandsRes } = useQuery({
     queryKey: ["brands-list"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/api/v1/brands/", { params: { limit: 1000 } });
+      const res = await axiosSecure.get("/api/v1/brands/", { params: { limit: 100 } });
       return res.data;
     }
   });
-  const brands = brandsRes?.data || [];
+  const brands = brandsRes?.data?.brands || [];
 
   const { data: categoriesRes } = useQuery({
     queryKey: ["categories-list"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/api/v1/categories/", { params: { limit: 1000 } });
+      const res = await axiosSecure.get("/api/v1/categories/", { params: { limit: 100 } });
       return res.data;
     }
   });
-  const categories = categoriesRes?.data || [];
+  const categories = categoriesRes?.data?.categories || [];
 
   // Populate form fields on query loaded
   useEffect(() => {
